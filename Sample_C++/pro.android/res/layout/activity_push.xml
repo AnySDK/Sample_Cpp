@@ -1,0 +1,48 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:id="@+id/push"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <Button
+            android:id="@+id/closePush"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="closePush" />
+        
+        <Button
+            android:id="@+id/setAlias"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="setAlias" />
+        <Button
+            android:id="@+id/delAlias"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="delAlias" />
+        
+        <Button
+            android:id="@+id/setTags"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="setTags" />
+        <Button
+            android:id="@+id/delTags"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="delTags" />
+        
+        
+        
+        
+
+
+    </LinearLayout>
+
+
+</RelativeLayout>
