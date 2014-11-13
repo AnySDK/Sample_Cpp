@@ -9,14 +9,22 @@ using namespace anysdk::framework;
 #define  LOG_TAG    "Ads"
 #define  LOGD(...)  __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG,__VA_ARGS__);
 extern "C"{
-void Java_com_anysdk_sample_wrapper_nativeShowAds(JNIEnv*  env, jobject thiz)
+void Java_com_anysdk_sample_wrapper_nativeShowAds1(JNIEnv*  env, jobject thiz)
 {
-	Ads::getInstance()->showAds();
+	Ads::getInstance()->showAds1();
 }
-
+void Java_com_anysdk_sample_wrapper_nativeShowAds2(JNIEnv*  env, jobject thiz)
+{
+	Ads::getInstance()->showAds2();
+}
 void Java_com_anysdk_sample_wrapper_nativeHideAds(JNIEnv*  env, jobject thiz)
 {
 	Ads::getInstance()->hideAds();
+}
+
+void Java_com_anysdk_sample_wrapper_nativePreloadAds(JNIEnv*  env, jobject thiz)
+{
+	Ads::getInstance()->preloadAds();
 }
 }
 
@@ -25,13 +33,11 @@ Ads* Ads::_pInstance = NULL;
 
 Ads::Ads()
 {
-    if(AgentManager::getInstance()->getAdsPlugin())
-    {
-    	AgentManager::getInstance()->getAdsPlugin()->setDebugMode(true);
-        AgentManager::getInstance()->getAdsPlugin()->setAdsListener(this);
+	_pAds = AgentManager::getInstance()->getAdsPlugin();
+	if(!_pAds) return;
 
-    }
-
+	_pAds->setDebugMode(true);
+	_pAds->setAdsListener(this);
 }
 
 Ads::~Ads()
@@ -55,6 +61,7 @@ void Ads::purge()
         _pInstance = NULL;
     }
 }
+
 void Ads::onAdsResult(AdsResultCode code, const char* msg)
 {
 	switch(code)
@@ -89,43 +96,31 @@ void Ads::onAdsResult(AdsResultCode code, const char* msg)
 
 }
 
-void Ads::showAds()
+void Ads::showAds1()
 {
-	LOGD("showAds");
-	if(AgentManager::getInstance()->getAdsPlugin())
-	{
-		if(AgentManager::getInstance()->getAdsPlugin()->isAdTypeSupported(AD_TYPE_BANNER))
-		{
-			AgentManager::getInstance()->getAdsPlugin()->showAds(AD_TYPE_BANNER);
-			AgentManager::getInstance()->getAdsPlugin()->showAds(AD_TYPE_BANNER,1);
-			AgentManager::getInstance()->getAdsPlugin()->showAds(AD_TYPE_BANNER,2);
-		}
+	LOGD("showAds1");
+	if(!_pAds || !(_pAds->isAdTypeSupported(AD_TYPE_BANNER))) return;
+	_pAds->showAds(AD_TYPE_BANNER,1);
 
-	}
+}
+
+void Ads::showAds2()
+{
+	LOGD("showAds2");
+	if(!_pAds || !(_pAds->isAdTypeSupported(AD_TYPE_BANNER))) return;
+	_pAds->showAds(AD_TYPE_BANNER,2);
 
 }
 
 void Ads::hideAds()
 {
-	if(AgentManager::getInstance()->getAdsPlugin())
-	{
-		if(AgentManager::getInstance()->getAdsPlugin()->isAdTypeSupported(AD_TYPE_BANNER))
-		{
-			AgentManager::getInstance()->getAdsPlugin()->hideAds(AD_TYPE_BANNER,2);
-		}
-
-	}
+	if(!_pAds || !(_pAds->isAdTypeSupported(AD_TYPE_BANNER))) return;
+	_pAds->hideAds(AD_TYPE_BANNER,1);
 }
 void Ads::preloadAds()
 {
-	if(AgentManager::getInstance()->getAdsPlugin())
-	{
-		if(AgentManager::getInstance()->getAdsPlugin()->isAdTypeSupported(AD_TYPE_FULLSCREEN))
-		{
-			AgentManager::getInstance()->getAdsPlugin()->preloadAds(AD_TYPE_FULLSCREEN);
-		}
-
-	}
+	if(!_pAds || !(_pAds->isAdTypeSupported(AD_TYPE_BANNER))) return;
+	_pAds->preloadAds(AD_TYPE_BANNER);
 }
 
 

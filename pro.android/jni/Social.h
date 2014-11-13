@@ -34,6 +34,7 @@ private:
     virtual ~Social();
 
     static Social* _pInstance;
+    ProtocolSocial* _pSocial;
 
 };
 

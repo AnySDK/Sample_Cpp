@@ -3,6 +3,7 @@
 
 #include "AgentManager.h"
 #include "string.h"
+#include "Analytics.h"
 using namespace anysdk::framework;
 using namespace std;
 class PluginChannel:public PayResultListener, public UserActionListener
@@ -102,6 +103,9 @@ private:
     static PluginChannel* _pInstance;
 	std::map<std::string, std::string> productInfo;
 	std::map<std::string , ProtocolIAP*>* _pluginsIAPMap;
+	ProtocolUser* _pUser;
+	AgentManager* _pAgent;
+	Analytics* _pAnalytics;
 
 };
 

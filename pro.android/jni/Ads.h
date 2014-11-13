@@ -17,7 +17,10 @@ public:
     virtual void onAdsResult(AdsResultCode code, const char* msg);
 
     //广告系统展示
-    void showAds();
+    void showAds1();
+
+    //广告系统展示
+    void showAds2();
 
     //广告系统隐藏
     void hideAds();
@@ -31,6 +34,8 @@ private:
     virtual ~Ads();
 
     static Ads* _pInstance;
+
+    ProtocolAds*  _pAds;
 
 };
 
