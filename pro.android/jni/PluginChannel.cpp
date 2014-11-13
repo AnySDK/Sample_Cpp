@@ -50,6 +50,9 @@ PluginChannel* PluginChannel::_pInstance = NULL;
 
 PluginChannel::PluginChannel()
 {
+	_pUser = NULL;
+	_pAgent = NULL;
+	_pAnalytics = NULL;
 	_pluginsIAPMap = NULL;
 
 }
@@ -85,21 +88,27 @@ void PluginChannel::loadPlugins()
      * oauthLoginServer参数是游戏服务提供的用来做登陆验证转发的接口地址。
      */
     std::string oauthLoginServer = "http://oauth.anysdk.com/api/OauthLoginDemo/Login.php";
-	std::string appKey = "AEE563E8-C007-DC32-5535-0518D941D6C2";
-	std::string appSecret = "b9fada2f86e3f73948f52d9673366610";
-	std::string privateKey = "0EE38DB7E37D13EBC50E329483167860";
-
-    AgentManager::getInstance()->init(appKey,appSecret,privateKey,oauthLoginServer);
+    std::string appKey = "AEE563E8-C007-DC32-5535-0518D941D6C2";
+    std::string appSecret = "b9fada2f86e3f73948f52d9673366610";
+    std::string privateKey = "0EE38DB7E37D13EBC50E329483167860";
+    
+	_pAgent = AgentManager::getInstance();
+	_pAgent->init(appKey,appSecret,privateKey,oauthLoginServer);
 
     //使用框架中代理类进行插件初始化
-    AgentManager::getInstance()->loadALLPlugin();
+	_pAgent->loadALLPlugin();
 
-    //对用户系统设置监听类
-    if(AgentManager::getInstance()->getUserPlugin())
-    {
-		AgentManager::getInstance()->getUserPlugin()->setDebugMode(true);
-    	AgentManager::getInstance()->getUserPlugin()->setActionListener(this);
-    }
+	do
+	{
+		_pUser = AgentManager::getInstance()->getUserPlugin();
+
+		if(!_pUser) break;
+		_pUser->setDebugMode(true);
+		//对用户系统设置监听类
+		_pUser->setActionListener(this);
+
+
+	}while(0);
 
     //对支付系统设置监听类
     LOGD("Load plugins invoked");
@@ -111,9 +120,18 @@ void PluginChannel::loadPlugins()
     	(iter->second)->setResultListener(this);
     }
 
-    Analytics::getInstance()->setCaptureUncaughtException(true);
-    Analytics::getInstance()->setSessionContinueMillis(15000);
-    Analytics::getInstance()->logTimedEventBegin("Load");
+    do
+	{
+    	_pAnalytics = Analytics::getInstance();
+
+		if(!_pAnalytics) break;
+	    _pAnalytics->setCaptureUncaughtException(true);
+	    _pAnalytics->setSessionContinueMillis(15000);
+	    _pAnalytics->logTimedEventBegin("Load");
+
+
+	}while(0);
+
     Push::getInstance()->startPush();
 
 }
@@ -122,8 +140,8 @@ void PluginChannel::loadPlugins()
 void PluginChannel::unloadPlugins()
 {
     LOGD("Unload plugins invoked");
-    AgentManager::getInstance()->unloadALLPlugin();
-    Analytics::getInstance()->logTimedEventEnd("Unload");
+    _pAgent->unloadALLPlugin();
+    _pAnalytics->logTimedEventEnd("Unload");
 }
 
 
@@ -131,35 +149,24 @@ void PluginChannel::unloadPlugins()
 
 void PluginChannel::login()
 {
-	if(AgentManager::getInstance()->getUserPlugin())
-	{
-		AgentManager::getInstance()->getUserPlugin()->login();
-		Analytics::getInstance()->logEvent("login");
-	}
+	if(!_pUser) return;
+	_pUser->login();
+	_pAnalytics->logEvent("login");
 }
-
 
 void PluginChannel::logout()
 {
-	if(AgentManager::getInstance()->getUserPlugin())
-	{
-		if(isFunctionSupported("logout"))
-		{
-
-			AgentManager::getInstance()->getUserPlugin()->callFuncWithParam("logout",NULL);
-		}
-	}
+	if(!_pUser || !isFunctionSupported("logout")) return;
+	_pUser->callFuncWithParam("logout",NULL);
 }
 
 bool PluginChannel::isFunctionSupported(std::string strClassName)
 {
-	if(AgentManager::getInstance()->getUserPlugin())
-	{
-        return AgentManager::getInstance()->getUserPlugin()->isFunctionSupported(strClassName);
+	if(!_pUser) return false;
 
-	}
-	return false;
+	return _pUser->isFunctionSupported(strClassName);
 }
+
 void ChoosePayMode(std::vector<std::string>& pluginId)
 {
 	PluginJniMethodInfo t;
@@ -186,19 +193,26 @@ void PluginChannel::pay()
 {
 
 	std::map<std::string , ProtocolIAP*>::iterator it = _pluginsIAPMap->begin();
+	std::string channelId = _pAgent->getChannelId();
 	if(_pluginsIAPMap)
 	{
 		productInfo["Product_Price"] = "1";
-        if(AgentManager::getInstance()->getChannelId()=="000016" || AgentManager::getInstance()->getChannelId()=="000009"|| AgentManager::getInstance()->getChannelId()=="000349"){
+        if(channelId=="000016" || channelId =="000009"|| channelId =="000349"){
 			productInfo["Product_Id"] = "1";
 		}
         else
-        if(AgentManager::getInstance()->getChannelId()=="000056" ){//联通，传计费点
+        if(channelId=="000056" ){//联通，传计费点
         	productInfo["Product_Id"] = "130201102727";
 		}
-		else{
+		else
+		if (channelId=="000266") {//移动基地，传计费点后三位
+			productInfo["Product_Id"] = "001";
+		}
+		else
+		{
 			productInfo["Product_Id"] = "monthly";
 		}
+
 		productInfo["Product_Name"] = "豌豆荚测试a1";
 		productInfo["Server_Id"] = "13";
 		productInfo["Product_Count"] = "1";
@@ -206,7 +220,7 @@ void PluginChannel::pay()
 		productInfo["Role_Name"] = "1";
 		productInfo["Role_Grade"] = "1";
 		productInfo["Role_Balance"] = "1";
-		Analytics::getInstance()->logEvent("pay", productInfo);
+		_pAnalytics->logEvent("pay", productInfo);
 		if(_pluginsIAPMap->size() == 1)
 		{
 
@@ -235,12 +249,9 @@ void PluginChannel::resetPayState()
 
 std::string PluginChannel::getUserId()
 {
-	if(AgentManager::getInstance()->getUserPlugin())
-	{
+	if(!_pUser) return "";
 
-
-		return AgentManager::getInstance()->getUserPlugin()->getUserID();
-	}
+	return 	_pUser->getUserID();
 }
 
 void PluginChannel::payMode(std::string id)
@@ -256,139 +267,80 @@ void PluginChannel::payMode(std::string id)
 
 void PluginChannel::enterPlatform()
 {
-	if(AgentManager::getInstance()->getUserPlugin())
-	{
-		//使用isFunctionSupported可先判断该插件是否支持该功能
-		if(isFunctionSupported("enterPlatform"))
-		{
-			AgentManager::getInstance()->getUserPlugin()->callFuncWithParam("enterPlatform",NULL);
-		}
-	}
+	if(!_pUser || !isFunctionSupported("enterPlatform")) return;
+
+	_pUser->callFuncWithParam("enterPlatform",NULL);
 }
-
-
 
 void PluginChannel::showToolBar(ToolBarPlace place)
 {
-	if(AgentManager::getInstance()->getUserPlugin())
-	{
-		if(isFunctionSupported("showToolBar"))
-		{
-			PluginParam paramInfo(place);
-			AgentManager::getInstance()->getUserPlugin()->callFuncWithParam("showToolBar",&paramInfo,NULL);
-		}
-	}
+	if(!_pUser || !isFunctionSupported("showToolBar")) return;
 
-
-
+	PluginParam paramInfo(place);
+	_pUser->callFuncWithParam("showToolBar",&paramInfo,NULL);
 }
 
 void PluginChannel::hideToolBar()
 {
-	if(AgentManager::getInstance()->getUserPlugin())
-	{
-		if(isFunctionSupported("hideToolBar"))
-		{
-			AgentManager::getInstance()->getUserPlugin()->callFuncWithParam("hideToolBar",NULL);
-		}
+	if(!_pUser || !isFunctionSupported("hideToolBar")) return;
 
-	}
-
+	_pUser->callFuncWithParam("hideToolBar",NULL);
 }
 
 void PluginChannel::pause()
 {
-	if(AgentManager::getInstance()->getUserPlugin())
-    {
-		if(isFunctionSupported("pause"))
-		{
-			AgentManager::getInstance()->getUserPlugin()->callFuncWithParam("pause",NULL);
-		}
+	if(!_pUser || !isFunctionSupported("pause")) return;
 
-	}
-
+	_pUser->callFuncWithParam("pause",NULL);
 }
 
 void PluginChannel::destroy()
 {
-	if(AgentManager::getInstance()->getUserPlugin())
-	{
-		if(isFunctionSupported("destroy"))
-		{
-			AgentManager::getInstance()->getUserPlugin()->callFuncWithParam("destroy",NULL);
-		}
+	if(!_pUser || !isFunctionSupported("destroy")) return;
 
-	}
+	_pUser->callFuncWithParam("destroy",NULL);
 }
 
 void PluginChannel::Exit()
 {
-	if(AgentManager::getInstance()->getUserPlugin())
-	{
-		if(isFunctionSupported("exit"))
-		{
-			AgentManager::getInstance()->getUserPlugin()->callFuncWithParam("exit",NULL);
-		}
+	if(!_pUser || !isFunctionSupported("exit")) return;
 
-	}
+	_pUser->callFuncWithParam("exit",NULL);
 }
 
 void PluginChannel::antiAddictionQuery()
 {
-	if(AgentManager::getInstance()->getUserPlugin())
-	{
-		if(isFunctionSupported("antiAddictionQuery"))
-		{
-			AgentManager::getInstance()->getUserPlugin()->callFuncWithParam("antiAddictionQuery",NULL);
-		}
+	if(!_pUser || !isFunctionSupported("antiAddictionQuery")) return;
 
-	}
-
+	_pUser->callFuncWithParam("antiAddictionQuery",NULL);
 }
 void PluginChannel::accountSwitch()
 {
-	if(AgentManager::getInstance()->getUserPlugin())
-	{
-		if(isFunctionSupported("accountSwitch"))
-		{
-			AgentManager::getInstance()->getUserPlugin()->callFuncWithParam("accountSwitch",NULL);
-		}
+	if(!_pUser || !isFunctionSupported("accountSwitch")) return;
 
-	}
-
+	_pUser->callFuncWithParam("accountSwitch",NULL);
 }
 void PluginChannel::realNameRegister()
 {
-	if(AgentManager::getInstance()->getUserPlugin())
-	{
-		if(isFunctionSupported("realNameRegister"))
-		{
-			AgentManager::getInstance()->getUserPlugin()->callFuncWithParam("realNameRegister",NULL);
-		}
+	if(!_pUser || !isFunctionSupported("realNameRegister")) return;
 
-	}
-
+	_pUser->callFuncWithParam("realNameRegister",NULL);
 }
 
 void PluginChannel::submitLoginGameRole()
 {
-	if(AgentManager::getInstance()->getUserPlugin())
-	{
-		if(PluginChannel::getInstance()->isFunctionSupported("submitLoginGameRole"))
-		{
-			StringMap userInfo;
-			userInfo["roleId"] = "ceshi : 123456";
-			userInfo["roleName"] = "ceshi : test";
-			userInfo["roleLevel"] = "ceshi : 10";
-			userInfo["zoneId"] = "ceshi : 123";
-			userInfo["zoneName"] = "ceshi : test";
-			userInfo["dataType"] = "ceshi : 1";
-			userInfo["ext"] = "ceshi : login";
-			PluginParam data(userInfo);
-			AgentManager::getInstance()->getUserPlugin()->callFuncWithParam("submitLoginGameRole",&data,NULL);
-		}
-	}
+	if(!_pUser || !isFunctionSupported("submitLoginGameRole")) return;
 
+	StringMap userInfo;
+	userInfo["roleId"] = "ceshi : 123456";
+	userInfo["roleName"] = "ceshi : test";
+	userInfo["roleLevel"] = "ceshi : 10";
+	userInfo["zoneId"] = "ceshi : 123";
+	userInfo["zoneName"] = "ceshi : test";
+	userInfo["dataType"] = "ceshi : 1";
+	userInfo["ext"] = "ceshi : login";
+	PluginParam data(userInfo);
+	_pUser->callFuncWithParam("submitLoginGameRole",&data,NULL);
 }
 
 void ShowTipDialog()
@@ -420,7 +372,7 @@ void PluginChannel::onPayResult(PayResultCode ret, const char* msg, TProductInfo
 		case kPayNetworkError://支付超时回调
 			CCMessageBox(temp.c_str()  , "NetworkError");
 			break;
-		case kPayProductionInforIncomplete://支付超时回调
+		case kPayProductionInforIncomplete://支付信息不完整
 			CCMessageBox(temp.c_str()  , "ProductionInforIncomplete");
 			break;
 		/**
@@ -505,7 +457,7 @@ void PluginChannel::onActionResult(ProtocolUser* pPlugin, UserActionResultCode c
 
 std::string PluginChannel::getChannelId()
 {
-	return AgentManager::getInstance()->getChannelId();
+	return _pAgent->getChannelId();
 }
 
 

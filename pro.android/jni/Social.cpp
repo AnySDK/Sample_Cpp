@@ -36,6 +36,7 @@ Social* Social::_pInstance = NULL;
 
 Social::Social()
 {
+	_pSocial = AgentManager::getInstance()->getSocialPlugin();
 	setListener();
 
 }
@@ -64,54 +65,39 @@ void Social::purge()
 
 void Social::setListener()
 {
+	if(!_pSocial) return;
 
-    if(AgentManager::getInstance()->getSocialPlugin())
-    {
-        AgentManager::getInstance()->getSocialPlugin()->setListener(this);
-    }
-
+	_pSocial->setListener(this);
 }
-
-
-
-
 
 void Social::submitScore()
 {
-	if(AgentManager::getInstance()->getSocialPlugin())
-	{
-			AgentManager::getInstance()->getSocialPlugin()->submitScore("friend",1);
-	}
+	if(!_pSocial) return;
 
+	_pSocial->submitScore("friend",1);
 }
+
 void Social::showLeaderboard()
 {
-	if(AgentManager::getInstance()->getSocialPlugin())
-	{
-			AgentManager::getInstance()->getSocialPlugin()->showLeaderboard("friends");
-	}
+	if(!_pSocial) return;
 
+	_pSocial->showLeaderboard("friends");
 }
 
 void Social::unlockAchievement()
 {
-	if(AgentManager::getInstance()->getSocialPlugin())
-	{
-		TAchievementInfo achInfo;
-		achInfo["rank"] = "friends";
-		AgentManager::getInstance()->getSocialPlugin()->unlockAchievement(achInfo);
-	}
+	if(!_pSocial) return;
 
+	TAchievementInfo achInfo;
+	achInfo["rank"] = "friends";
+	_pSocial->unlockAchievement(achInfo);
 }
 
 void Social::showAchievements()
 {
-	if(AgentManager::getInstance()->getSocialPlugin())
-	{
-			AgentManager::getInstance()->getSocialPlugin()->showAchievements();
-	}
+	if(!_pSocial) return;
 
-
+	_pSocial->showAchievements();
 }
 
 

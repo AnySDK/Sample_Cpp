@@ -56,6 +56,8 @@ private:
 
     static Analytics* _pInstance;
 
+    ProtocolAnalytics* _pAnalytics;
+
 };
 
 #endif

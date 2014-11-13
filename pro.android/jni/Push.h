@@ -46,6 +46,8 @@ private:
 
     static Push* _pInstance;
 
+    ProtocolPush* _pPush;
+
 };
 
 #endif

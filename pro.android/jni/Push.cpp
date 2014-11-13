@@ -44,8 +44,8 @@ Push* Push::_pInstance = NULL;
 
 Push::Push()
 {
+	_pPush = AgentManager::getInstance()->getPushPlugin();
 	setListener();
-
 }
 
 Push::~Push()
@@ -72,97 +72,69 @@ void Push::purge()
 
 void Push::setListener()
 {
-
-    if(AgentManager::getInstance()->getPushPlugin())
-    {
-        AgentManager::getInstance()->getPushPlugin()->setActionListener(this);
-    }
-
+	if(!_pPush) return;
+	_pPush->setActionListener(this);
 }
 
 //开启推送
 void Push::startPush()
 {
-	 if(AgentManager::getInstance()->getPushPlugin())
-	 {
-	     AgentManager::getInstance()->getPushPlugin()->startPush();
-	 }
+	if(!_pPush) return;
+	_pPush->startPush();
 }
 
 //开启推送
 void Push::closePush()
 {
-	 if(AgentManager::getInstance()->getPushPlugin())
-	 {
-		 AgentManager::getInstance()->getPushPlugin()->closePush();
-	 }
+	if(!_pPush) return;
+	_pPush->closePush();
 
 }
 
 //设置别名
 void Push::setAlias()
 {
-	if(AgentManager::getInstance()->getPushPlugin())
-	{
-		AgentManager::getInstance()->getPushPlugin()->setAlias("AnySDK");
-	}
-
-
+	if(!_pPush) return;
+	_pPush->setAlias("AnySDK");
 }
-
-
 
 //删除别名
 void Push::delAlias()
 {
-	if(AgentManager::getInstance()->getPushPlugin())
-	{
-		AgentManager::getInstance()->getPushPlugin()->delAlias("AnySDK");
-	}
-
+	if(!_pPush) return;
+	_pPush->delAlias("AnySDK");
 }
 
 //设置标签
 void Push::setTags()
 {
-	if(AgentManager::getInstance()->getPushPlugin())
-	{
-		list<string> tags;
-		tags.push_back("easy");
-		tags.push_back("fast");
-		AgentManager::getInstance()->getPushPlugin()->setTags(tags);
-	}
-
+	if(!_pPush) return;
+	list<string> tags;
+	tags.push_back("easy");
+	tags.push_back("fast");
+	_pPush->setTags(tags);
 }
 
 //删除标签
 void Push::delTags()
 {
-	if(AgentManager::getInstance()->getPushPlugin())
-	{
-		list<string> tags;
-		tags.push_back("easy");
-		tags.push_back("fast");
-		AgentManager::getInstance()->getPushPlugin()->delTags(tags);
-	}
-
+	if(!_pPush) return;
+	list<string> tags;
+	tags.push_back("easy");
+	tags.push_back("fast");
+	_pPush->delTags(tags);
 }
-
-
 
 //Push回调函数
 void Push::onActionResult(ProtocolPush* pPlugin, PushActionResultCode code, const char* msg)
 {
-	LOGD("Push::onActionResult");
+	LOGD("Push::onActionResult %d -- %s",code,msg);
 	switch(code)
 	{
 	case kPushReceiveMessage://Push接受到消息回调
-		LOGD("%s",msg);
+		LOGD("kPushReceiveMessage  ==> %s",msg);
 		break;
 	default:
 		break;
 	}
-
 }
-
-
