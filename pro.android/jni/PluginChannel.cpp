@@ -140,8 +140,9 @@ void PluginChannel::loadPlugins()
 void PluginChannel::unloadPlugins()
 {
     LOGD("Unload plugins invoked");
-    _pAgent->unloadALLPlugin();
     _pAnalytics->logTimedEventEnd("Unload");
+    _pAgent->unloadALLPlugin();
+
 }
 
 

@@ -321,7 +321,6 @@ public class MainActivity extends Activity   implements OnClickListener{
 	 protected void onDestroy() {
 		 super.onDestroy();
 	     wrapper.nativeDestroy();
-	     wrapper.nativeUnLoadPlugins();
 	 };
 	 
 	 @Override
