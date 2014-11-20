@@ -1,7 +1,7 @@
 #Sample_Cpp
 
 ###Samplefor AnySDK_Framework_C++1.3.0  
-1、更新框架1.2.3  
+1、更新框架1.3.0.1  
 
 ###Sample_1.0.8 for AnySDK_Framework_C++1.2.3
 
