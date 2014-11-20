@@ -383,6 +383,8 @@ void PluginChannel::onPayResult(PayResultCode ret, const char* msg, TProductInfo
 		case kPayNowPaying:
 			ShowTipDialog();
 			break;
+		case kPayRechareSuccess: //充值成功回调
+			break;
 		default:
 			break;
 		}
@@ -444,6 +446,8 @@ void PluginChannel::onActionResult(ProtocolUser* pPlugin, UserActionResultCode c
 	case kAccountSwitchSuccess://切换账号成功回调
 		break;
 	case kAccountSwitchFail://切换账号成功回调
+		break;
+	case kOpenShop://打开游戏商店回调
 		break;
 	default:
 		break;
