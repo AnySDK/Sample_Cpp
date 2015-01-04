@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Channel999999</key>
+	<string>debug模式</string>
+	<key>Channel500001</key>
+	<string>91支付</string>
+	<key>Channel500026</key>
+	<string>AppStore</string>
+	<key>Channel500003</key>
+	<string>pp助手</string>
+	<key>Channel500004</key>
+	<string>快用助手</string>
+	<key>Channel500002</key>
+	<string>同步推</string>
+</dict>
+</plist>
