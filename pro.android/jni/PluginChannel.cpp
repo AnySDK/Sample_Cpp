@@ -384,7 +384,7 @@ void PluginChannel::onPayResult(PayResultCode ret, const char* msg, TProductInfo
 		case kPayNowPaying:
 			ShowTipDialog();
 			break;
-		case kPayRechareSuccess: //充值成功回调
+		case kPayRechargeSuccess: //充值成功回调
 			break;
 		default:
 			break;
