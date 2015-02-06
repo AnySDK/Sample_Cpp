@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "InterfaceUser.h"
 
+#pragma once
 
 typedef enum : NSUInteger {
     ACTION_RET_INIT_SUCCESS = 0,

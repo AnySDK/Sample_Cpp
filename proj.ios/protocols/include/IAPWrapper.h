@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+#pragma once
+
 @interface IAPWrapper : NSObject
 
 + (int) getNumber;
