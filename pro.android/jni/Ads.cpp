@@ -9,13 +9,9 @@ using namespace anysdk::framework;
 #define  LOG_TAG    "Ads"
 #define  LOGD(...)  __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG,__VA_ARGS__);
 extern "C"{
-void Java_com_anysdk_sample_wrapper_nativeShowAds1(JNIEnv*  env, jobject thiz)
+void Java_com_anysdk_sample_wrapper_nativeShowAds(JNIEnv*  env, jobject thiz)
 {
-	Ads::getInstance()->showAds1();
-}
-void Java_com_anysdk_sample_wrapper_nativeShowAds2(JNIEnv*  env, jobject thiz)
-{
-	Ads::getInstance()->showAds2();
+	Ads::getInstance()->showAds();
 }
 void Java_com_anysdk_sample_wrapper_nativeHideAds(JNIEnv*  env, jobject thiz)
 {
@@ -96,19 +92,11 @@ void Ads::onAdsResult(AdsResultCode code, const char* msg)
 
 }
 
-void Ads::showAds1()
+void Ads::showAds()
 {
-	LOGD("showAds1");
+	LOGD("showAds");
 	if(!_pAds || !(_pAds->isAdTypeSupported(AD_TYPE_BANNER))) return;
 	_pAds->showAds(AD_TYPE_BANNER,1);
-
-}
-
-void Ads::showAds2()
-{
-	LOGD("showAds2");
-	if(!_pAds || !(_pAds->isAdTypeSupported(AD_TYPE_BANNER))) return;
-	_pAds->showAds(AD_TYPE_BANNER,2);
 
 }
 
