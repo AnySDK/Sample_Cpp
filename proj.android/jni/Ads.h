@@ -17,10 +17,7 @@ public:
     virtual void onAdsResult(AdsResultCode code, const char* msg);
 
     //广告系统展示
-    void showAds1();
-
-    //广告系统展示
-    void showAds2();
+    void showAds();
 
     //广告系统隐藏
     void hideAds();
