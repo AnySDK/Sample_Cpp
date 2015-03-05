@@ -58,6 +58,7 @@ void Social::submitScore()
     if(AgentManager::getInstance()->getSocialPlugin())
     {
         AgentManager::getInstance()->getSocialPlugin()->submitScore("friend",1);
+        AgentManager::getInstance()->getSocialPlugin()->signIn();
     }
     
 }
@@ -66,6 +67,7 @@ void Social::showLeaderboard()
     if(AgentManager::getInstance()->getSocialPlugin())
     {
         AgentManager::getInstance()->getSocialPlugin()->showLeaderboard("friends");
+        AgentManager::getInstance()->getSocialPlugin()->signOut();
     }
     
 }
@@ -93,6 +95,7 @@ void Social::showAchievements()
 //社交回调函数
 void Social::onSocialResult(SocialRetCode code, const char* msg)
 {
+    printf("social onSocialResult, code:%d, msg:%s\n", code, msg);
     switch(code)
     {
         case kScoreSubmitSucceed://提交分数成功回调

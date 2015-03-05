@@ -389,54 +389,12 @@ static UIButton* backBtn = nil;
     switch (idx) {
         case IAP_PAY:{
             PluginChannel::getInstance()->pay();
-//            std::string pluginID = iap_plugin->getPluginId();
-//            printf("pluginID:%s\n", pluginID.c_str());
-//            if (pluginID == "500026") {   //is iap-iphone
-//                iap_plugin->payForProduct(_myProducts["1"]);
-//                return;
-//            }
-//            TProductInfo productInfo;
-//            productInfo["Product_Price"] = "0.01";
-//            if(agent->getChannelId()=="000016" || agent->getChannelId()=="000009"|| agent->getChannelId()=="000349"){
-//                productInfo["Product_Id"] = "1";
-//            }
-//            else{
-//                if(agent->getChannelId()=="000056" ){//联通，传计费点
-//                    productInfo["Product_Id"] = "130201102727";
-//                }
-//                else{
-//                    if (agent->getChannelId()=="000266") {//移动基地，传计费点后三位
-//                        productInfo["Product_Id"] = "001";
-//                    }
-//                    else
-//                    {
-//                        productInfo["Product_Id"] = "monthly";
-//                    }
-//                }
-//            }
-//            
-//            productInfo["Product_Name"] = "豌豆荚测试a1";
-//            productInfo["Server_Id"] = "13";
-//            productInfo["Product_Count"] = "1";
-//            productInfo["Role_Id"] = "1";
-//            productInfo["Role_Name"] = "1";
-//            productInfo["Role_Grade"] = "1";
-//            productInfo["Role_Balance"] = "1";
-//            iap_plugin->payForProduct(productInfo);
         }
             break;
         case IAP_REQUEST:{
             NSLog(@"request iap product info.");
             
             PluginChannel::getInstance()->requestProducts();
-//            iap_plugin->setDebugMode(true);
-//            
-//            printf("payRequest");
-//            PluginParam param1("PD_10005");
-//            PluginParam param2("PD_10004");
-//            PluginParam param3("PD_10003");
-//            iap_plugin->callFuncWithParam("requestProducts", &param1, &param2, &param3, NULL);
-//            printf("end payRequest");
         }
             break;
             

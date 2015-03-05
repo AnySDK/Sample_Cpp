@@ -72,7 +72,7 @@ void PluginChannel::loadPlugins()
      * appKey、appSecret、privateKey不能使用Sample中的值，需要从打包工具中游戏管理界面获取，替换
      * oauthLoginServer参数是游戏服务提供的用来做登陆验证转发的接口地址。
      */
-#define qudao_info
+//#define qudao_info
 #ifdef qudao_info
     std::string appKey = "96418BB3-2DD9-4ADC-3FF9-E0F18857FD3E";
     std::string appSecret = "5c11e736bb3bca886effb70886a85830";
@@ -93,18 +93,15 @@ void PluginChannel::loadPlugins()
     //对用户系统设置监听类
     if(AgentManager::getInstance()->getUserPlugin())
     {
-        AgentManager::getInstance()->getUserPlugin()->setDebugMode(true);
         AgentManager::getInstance()->getUserPlugin()->setActionListener(this);
     }
     
     //对支付系统设置监听类
-    printf("Load plugins invoked\n");
     _pluginsIAPMap  = AgentManager::getInstance()->getIAPPlugin();
     _iapCount = _pluginsIAPMap->size();
     std::map<std::string , ProtocolIAP*>::iterator iter;
     for(iter = _pluginsIAPMap->begin(); iter != _pluginsIAPMap->end(); iter++)
     {
-        (iter->second)->setDebugMode(true);
         (iter->second)->setResultListener(this);
     }
     
@@ -136,6 +133,7 @@ void PluginChannel::login()
 {
     if(AgentManager::getInstance()->getUserPlugin())
     {
+        AgentManager::getInstance()->getUserPlugin()->setDebugMode(true);
         AgentManager::getInstance()->getUserPlugin()->login();
         Analytics::getInstance()->logEvent("login");
     }
@@ -169,7 +167,7 @@ const char* PluginChannel::getResourceId(std::string name)
     printf("getResourceId:%s\n", name.c_str());
     NSString *plistPath = [[NSBundle mainBundle] pathForResource:@"channel" ofType:@"plist"];
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:plistPath];
-//    NSLog(@"%@", data);
+
     NSString* key = [[NSString alloc] initWithUTF8String:name.c_str()];
     NSString* value = [data objectForKey:key];
     return [value UTF8String];
@@ -211,7 +209,6 @@ ProtocolIAP* PluginChannel::getIAPIphone()
     {
         std::map<std::string , ProtocolIAP*>::iterator it = _pluginsIAPMap->begin();
         for (; it != _pluginsIAPMap->end(); it++) {
-            printf("it->first: %s----\n", it->first.c_str());
             if (it->first == IAP_IPHONE_ID) {
                 return it->second;
             }
@@ -485,7 +482,7 @@ void PluginChannel::onPayResult(PayResultCode ret, const char* msg, TProductInfo
 
 void PluginChannel::onActionResult(ProtocolUser* pPlugin, UserActionResultCode code, const char* msg)
 {
-    printf("PluginChannel, onActionResult:%d, msg%s\n",code,msg);
+    printf("PluginChannel, onActionResult:%d, msg:%s\n",code,msg);
     bool _userLogined = false;
     switch(code)
     {

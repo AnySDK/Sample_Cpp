@@ -25,6 +25,8 @@
 		D77335891A10B66E009D3650 /* Social.mm in Sources */ = {isa = PBXBuildFile; fileRef = D77335881A10B66E009D3650 /* Social.mm */; };
 		D773358C1A10B73D009D3650 /* Analytics.mm in Sources */ = {isa = PBXBuildFile; fileRef = D773358B1A10B73D009D3650 /* Analytics.mm */; };
 		D773358F1A10B8A3009D3650 /* PluginChannel.mm in Sources */ = {isa = PBXBuildFile; fileRef = D773358E1A10B8A3009D3650 /* PluginChannel.mm */; };
+		D78C47481A885CEE00AF6BA3 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D78C47471A885CEE00AF6BA3 /* MobileCoreServices.framework */; };
+		D78C474A1A885CF500AF6BA3 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D78C47491A885CF500AF6BA3 /* libz.dylib */; };
 		D7CDB8321A10862E00CD7A9A /* Ads.mm in Sources */ = {isa = PBXBuildFile; fileRef = D7CDB8311A10862E00CD7A9A /* Ads.mm */; };
 /* End PBXBuildFile section */
 
@@ -87,6 +89,8 @@
 		D773358B1A10B73D009D3650 /* Analytics.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Analytics.mm; sourceTree = "<group>"; };
 		D773358D1A10B8A3009D3650 /* PluginChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginChannel.h; sourceTree = "<group>"; };
 		D773358E1A10B8A3009D3650 /* PluginChannel.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PluginChannel.mm; sourceTree = "<group>"; };
+		D78C47471A885CEE00AF6BA3 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
+		D78C47491A885CF500AF6BA3 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		D7CDB8301A10862E00CD7A9A /* Ads.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ads.h; sourceTree = "<group>"; };
 		D7CDB8311A10862E00CD7A9A /* Ads.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Ads.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -96,6 +100,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D78C474A1A885CF500AF6BA3 /* libz.dylib in Frameworks */,
+				D78C47481A885CEE00AF6BA3 /* MobileCoreServices.framework in Frameworks */,
 				D75A363E1A00BCDC00FA5268 /* SystemConfiguration.framework in Frameworks */,
 				D75A363A1A00B67800FA5268 /* libPluginProtocol.a in Frameworks */,
 			);
@@ -115,6 +121,8 @@
 		D75A35EA1A00B57D00FA5268 = {
 			isa = PBXGroup;
 			children = (
+				D78C47491A885CF500AF6BA3 /* libz.dylib */,
+				D78C47471A885CEE00AF6BA3 /* MobileCoreServices.framework */,
 				D722913A1A1203FB007BDAB8 /* res */,
 				D75A363D1A00BCDC00FA5268 /* SystemConfiguration.framework */,
 				D75A361C1A00B67800FA5268 /* protocols */,
@@ -258,6 +266,7 @@
 				TargetAttributes = {
 					D75A35F21A00B57D00FA5268 = {
 						CreatedOnToolsVersion = 6.0.1;
+						DevelopmentTeam = NQ596S94Q5;
 					};
 				};
 			};
@@ -418,12 +427,19 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"/Users/cocos-q/Documents/AnySDK/asdf/1.0/iOS-心动/Project_iOS/sdk/iOS_xdUser/Frameworks",
+				);
 				INFOPLIST_FILE = sample/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../protocols/";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
 		};
@@ -431,12 +447,19 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"/Users/cocos-q/Documents/AnySDK/asdf/1.0/iOS-心动/Project_iOS/sdk/iOS_xdUser/Frameworks",
+				);
 				INFOPLIST_FILE = sample/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../protocols/";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
 		};

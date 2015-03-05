@@ -11,8 +11,24 @@
 	<key>Channel500003</key>
 	<string>pp助手</string>
 	<key>Channel500004</key>
-	<string>快用助手</string>
+	<string>iTools</string>
 	<key>Channel500002</key>
 	<string>同步推</string>
+	<key>Channel500015</key>
+	<string>苹果快用助手</string>
+	<key>Channel500018</key>
+	<string>娱玩</string>
+	<key>Channel500017</key>
+	<string>海马助手</string>
+	<key>Channel500014</key>
+	<string>当乐</string>
+	<key>Channel500036</key>
+	<string>心动</string>
+	<key>Channel500020</key>
+	<string>爱思助手</string>
+	<key>Channel500030</key>
+	<string>XY助手</string>
+	<key>Channel500019</key>
+	<string>UC</string>
 </dict>
 </plist>

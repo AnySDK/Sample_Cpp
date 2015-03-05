@@ -26,7 +26,6 @@
     //add six systems buttons.
     [self addBaseButtons];
     
-//    NSLog(@"self view:%@", [self view]);
     _parts = [PartViews getInstance:self];
     [_parts initAgent];
 }
