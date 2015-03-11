@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="Channel000000">触控支付</string>
+    <string name="Channel000002">机锋支付</string>
+    <string name="Channel000003">当乐支付</string>
+    <string name="Channel000005">安智支付</string>
+    <string name="Channel000007">91支付</string>
+    <string name="Channel000008">木蚂蚁支付</string>
+    <string name="Channel000009">应用汇支付</string>
+    <string name="Channel000016">联想支付</string>
+    <string name="Channel000020">OPPO支付</string>
+    <string name="Channel000023">360支付</string>
+    <string name="Channel000054">华为支付</string>
+    <string name="Channel000066">小米支付</string>
+    <string name="Channel000072">3G支付</string>
+    <string name="Channel000116">豌豆荚支付</string>
+    <string name="Channel000215">多酷支付</string>
+    <string name="Channel000255">UC支付</string>
+    <string name="Channel000349">欧朋支付</string>
+    
+    
+</resources>

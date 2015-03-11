@@ -1,0 +1,42 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:id="@+id/socail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <Button
+            android:id="@+id/submitScore"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="submitScore" />
+        
+        <Button
+            android:id="@+id/showLeaderboard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="showLeaderboard" />
+                
+        <Button
+            android:id="@+id/unlockAchievement"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="unlockAchievement" />
+                
+        <Button
+            android:id="@+id/showAchievements"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="showAchievements" />
+        
+        
+
+
+    </LinearLayout>
+
+
+</RelativeLayout>

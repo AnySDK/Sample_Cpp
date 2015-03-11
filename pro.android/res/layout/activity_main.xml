@@ -1,0 +1,54 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity" >
+
+    <LinearLayout
+        android:id="@+id/main"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <Button
+            android:id="@+id/userSystem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="User system" />
+
+        <Button
+            android:id="@+id/iapSystem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="IAP system" />
+        
+        <Button
+            android:id="@+id/shareSystem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Share system" />
+        
+        <Button
+            android:id="@+id/adsSystem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Ads system" />        
+        <Button
+            android:id="@+id/socialSystem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Social system" />  
+            
+        <Button
+            android:id="@+id/pushSystem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Push system" />  
+        
+        
+
+
+    </LinearLayout>
+
+
+</RelativeLayout>
