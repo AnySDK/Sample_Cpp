@@ -65,12 +65,12 @@ public:
     /**
      @brief load the plugins
     */
-    void loadAllPlugin();
+    void loadAllPlugins();
 
     /**
      @brief unload the plugins
     */
-    void unloadAllPlugin();
+    void unloadAllPlugins();
 
     /**
      @brief Get Analytics plugin

@@ -88,7 +88,7 @@ void PluginChannel::loadPlugins()
     AgentManager::getInstance()->init(appKey,appSecret,privateKey,oauthLoginServer);
     
     //使用框架中代理类进行插件初始化
-    AgentManager::getInstance()->loadAllPlugin();
+    AgentManager::getInstance()->loadAllPlugins();
     
     //对用户系统设置监听类
     if(AgentManager::getInstance()->getUserPlugin())
@@ -116,7 +116,7 @@ void PluginChannel::loadPlugins()
 void PluginChannel::unloadPlugins()
 {
     printf("Unload plugins invoked\n");
-    AgentManager::getInstance()->unloadAllPlugin();
+    AgentManager::getInstance()->unloadAllPlugins();
     Analytics::getInstance()->logTimedEventEnd("Unload");
 }
 
