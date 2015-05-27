@@ -96,14 +96,13 @@ void PluginChannel::loadPlugins()
 	_pAgent->init(appKey,appSecret,privateKey,oauthLoginServer);
 
     //使用框架中代理类进行插件初始化
-	_pAgent->loadALLPlugin();
+	_pAgent->loadAllPlugin();
 
 	do
 	{
 		_pUser = AgentManager::getInstance()->getUserPlugin();
 
 		if(!_pUser) break;
-		_pUser->setDebugMode(true);
 		//对用户系统设置监听类
 		_pUser->setActionListener(this);
 
@@ -116,7 +115,6 @@ void PluginChannel::loadPlugins()
     std::map<std::string , ProtocolIAP*>::iterator iter;
     for(iter = _pluginsIAPMap->begin(); iter != _pluginsIAPMap->end(); iter++)
     {
-    	(iter->second)->setDebugMode(true);
     	(iter->second)->setResultListener(this);
     }
 
@@ -141,7 +139,7 @@ void PluginChannel::unloadPlugins()
 {
     LOGD("Unload plugins invoked");
     _pAnalytics->logTimedEventEnd("Unload");
-    _pAgent->unloadALLPlugin();
+    _pAgent->unloadAllPlugin();
 
 }
 
@@ -225,7 +223,6 @@ void PluginChannel::pay()
 		if(_pluginsIAPMap->size() == 1)
 		{
 
-			(it->second)->setDebugMode(true);
 			(it->second)->payForProduct(productInfo);
 		}
 		else if(_pluginsIAPMap->size() > 1)

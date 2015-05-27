@@ -72,11 +72,11 @@ void PluginChannel::loadPlugins()
      * appKey、appSecret、privateKey不能使用Sample中的值，需要从打包工具中游戏管理界面获取，替换
      * oauthLoginServer参数是游戏服务提供的用来做登陆验证转发的接口地址。
      */
-//#define qudao_info
+#define qudao_info
 #ifdef qudao_info
-    std::string appKey = "96418BB3-2DD9-4ADC-3FF9-E0F18857FD3E";
-    std::string appSecret = "5c11e736bb3bca886effb70886a85830";
-    std::string privateKey = "ACB121D6FF9D7CEAAACE3960ADF4A9CE";
+    std::string appKey = "0914CB16-BAEE-790E-808E-3A37B8FFBE3F";
+    std::string appSecret = "62bee0ddb86bdeccb8acd959765041cc";
+    std::string privateKey = "96C273AB03E1A798BA1AD0C38004871F";
     std::string oauthLoginServer = "http://oauth.qudao.info/api/OauthLoginDemo/Login.php";
 #else
     std::string appKey = "CED525C0-8D41-F514-96D8-90092EB3899A";
@@ -88,7 +88,7 @@ void PluginChannel::loadPlugins()
     AgentManager::getInstance()->init(appKey,appSecret,privateKey,oauthLoginServer);
     
     //使用框架中代理类进行插件初始化
-    AgentManager::getInstance()->loadALLPlugin();
+    AgentManager::getInstance()->loadAllPlugin();
     
     //对用户系统设置监听类
     if(AgentManager::getInstance()->getUserPlugin())
@@ -116,7 +116,7 @@ void PluginChannel::loadPlugins()
 void PluginChannel::unloadPlugins()
 {
     printf("Unload plugins invoked\n");
-    AgentManager::getInstance()->unloadALLPlugin();
+    AgentManager::getInstance()->unloadAllPlugin();
     Analytics::getInstance()->logTimedEventEnd("Unload");
 }
 
@@ -133,7 +133,6 @@ void PluginChannel::login()
 {
     if(AgentManager::getInstance()->getUserPlugin())
     {
-        AgentManager::getInstance()->getUserPlugin()->setDebugMode(true);
         AgentManager::getInstance()->getUserPlugin()->login();
         Analytics::getInstance()->logEvent("login");
     }
@@ -273,7 +272,6 @@ void PluginChannel::pay()
         Analytics::getInstance()->logEvent("pay", productInfo);
         if(_pluginsIAPMap->size() == 1)
         {
-            (it->second)->setDebugMode(true);
             (it->second)->payForProduct(productInfo);
         }
         else if(_pluginsIAPMap->size() > 1)

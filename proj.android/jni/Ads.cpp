@@ -32,7 +32,6 @@ Ads::Ads()
 	_pAds = AgentManager::getInstance()->getAdsPlugin();
 	if(!_pAds) return;
 
-	_pAds->setDebugMode(true);
 	_pAds->setAdsListener(this);
 }
 

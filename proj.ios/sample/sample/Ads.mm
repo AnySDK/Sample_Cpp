@@ -14,11 +14,6 @@ Ads* Ads::_pInstance = NULL;
 
 Ads::Ads()
 {
-//    if(AgentManager::getInstance()->getAdsPlugin())
-//    {
-//        ads_plugin->setDebugMode(true);
-//        ads_plugin->setAdsListener(this);
-//    }
 }
 
 Ads::~Ads()
@@ -31,7 +26,6 @@ Ads* Ads::getInstance()
     if (_pInstance == NULL) {
         _pInstance = new Ads();
         _pInstance->ads_plugin = AgentManager::getInstance()->getAdsPlugin();
-        _pInstance->ads_plugin->setDebugMode(true);
         _pInstance->ads_plugin->setAdsListener(_pInstance);
     }
     return _pInstance;

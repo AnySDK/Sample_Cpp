@@ -7,7 +7,8 @@
 #include <list>
 #include "PluginParam.h"
 #include "PluginJniMacros.h"
-#include <android_native_app_glue.h>
+#include <android/log.h>
+//#include <android_native_app_glue.h>
 
 namespace anysdk { namespace framework {
 
@@ -15,7 +16,7 @@ class PluginProtocol;
 class PluginUtils
 {
 public:
-    static void initPluginWrapper(android_app* app);
+//cjh  static void initPluginWrapper(android_app* app);
     static jobject createJavaMapObject(std::map<std::string, std::string>* paramMap);
     static jobject createJavaListObject(std::list<std::string>* paramList);
     static void initJavaPlugin(PluginProtocol* pPlugin, jobject jObj, const char* className, int type);
@@ -23,16 +24,12 @@ public:
 
     static PluginJavaData* getPluginJavaData(PluginProtocol* pKeyObj);
     static void setPluginJavaData(PluginProtocol* pKeyObj, PluginJavaData* pData, int type);
-    static void erasePluginJavaData(PluginProtocol* pKeyObj);
+    static void erasePluginJavaData(PluginProtocol* pKeyObj,int type);
     static void erasePluginJavaData(std::string key);
 
     static PluginProtocol* getPluginPtr(std::string className);
 
     static jobject getJObjFromParam(PluginParam* param);
-
-    static void KPCount(std::string event);
-
-    static std::string pluginDecode(std::string str);
 
     // methods have no return value
     template <typename T>
@@ -145,7 +142,7 @@ public:
         CALL_BASERET_JAVA_FUNC(bool, "()Z", Boolean, false)
     }
 
-    static void outputLog(const char* logTag, const char* pFormat, ...);
+    static void outputLog(int type, const char* logTag, const char* pFormat, ...);
 };
 
 }} // namespace anysdk { namespace framework {

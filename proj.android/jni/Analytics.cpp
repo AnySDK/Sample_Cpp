@@ -24,7 +24,6 @@ Analytics::Analytics()
 {
 	_pAnalytics = AgentManager::getInstance()->getAnalyticsPlugin();
 	if(!_pAnalytics) return;
-	_pAnalytics->setDebugMode(true);
 }
 
 Analytics::~Analytics()
