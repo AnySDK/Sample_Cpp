@@ -27,6 +27,8 @@ Ads* Ads::getInstance()
         _pInstance = new Ads();
         _pInstance->ads_plugin = AgentManager::getInstance()->getAdsPlugin();
         _pInstance->ads_plugin->setAdsListener(_pInstance);
+        
+        
     }
     return _pInstance;
 }
@@ -84,6 +86,7 @@ void Ads::showAds(AdsType type, int idx)
         if(ads_plugin->isAdTypeSupported(type))
         {
             ads_plugin->showAds(type,idx);
+            
         }
     }
 }

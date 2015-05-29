@@ -96,7 +96,7 @@ void PluginChannel::loadPlugins()
 	_pAgent->init(appKey,appSecret,privateKey,oauthLoginServer);
 
     //使用框架中代理类进行插件初始化
-	_pAgent->loadAllPlugin();
+	_pAgent->loadAllPlugins();
 
 	do
 	{
@@ -139,7 +139,7 @@ void PluginChannel::unloadPlugins()
 {
     LOGD("Unload plugins invoked");
     _pAnalytics->logTimedEventEnd("Unload");
-    _pAgent->unloadAllPlugin();
+    _pAgent->unloadAllPlugins();
 
 }
 

@@ -180,6 +180,13 @@ static UIButton* backBtn = nil;
             break;
         case LOG_ERROR:
             _analytics->logError("1003", "err msg!");
+            _analytics->startLevel();
+            _analytics->setAccount();
+            _analytics->onChargeFail();
+            _analytics->onChargeOnlySuccess();
+            _analytics->onChargeRequest();
+            _analytics->failLevel();
+            _analytics->finishLevel();
             break;
             
         default:
