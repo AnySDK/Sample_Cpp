@@ -4,7 +4,10 @@
     android:versionCode="1008"
     android:versionName="1.2.3" >
 
-
+    <uses-sdk
+        android:minSdkVersion="10"
+        android:targetSdkVersion="17" />
+    
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -12,7 +15,6 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name="com.anysdk.sample.MainActivity"
-            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name" >
@@ -20,7 +22,6 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            
         </activity>
     </application>
     <uses-permission android:name="android.permission.INTERNET" />
