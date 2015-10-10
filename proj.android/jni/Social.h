@@ -15,7 +15,8 @@ public:
 
     void setListener();
 
-
+    void signIn();
+    void signOut();
 	void submitScore();
 	void showLeaderboard();
 

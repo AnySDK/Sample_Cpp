@@ -3,7 +3,9 @@
 #include <android/log.h>
 #include "PluginJniHelper.h"
 #include <stdlib.h>
-
+#ifndef AS_NO_USING_CPP11
+#include <functional>
+#endif
 using namespace anysdk::framework;
 
 #define  LOG_TAG    "Push"
@@ -40,6 +42,20 @@ void Java_com_anysdk_sample_wrapper_nativeDelTags(JNIEnv*  env, jobject thiz)
 }
 }
 
+//Push回调函数
+void pushCallback(int code,string msg)
+{
+	LOGD("pushCallback %d -- %s",code,msg.c_str());
+	switch(code)
+	{
+	case kPushReceiveMessage://Push接受到消息回调
+		LOGD("kPushReceiveMessage  ==> %s",msg.c_str());
+		break;
+	default:
+		break;
+	}
+}
+
 Push* Push::_pInstance = NULL;
 
 Push::Push()
@@ -74,6 +90,9 @@ void Push::setListener()
 {
 	if(!_pPush) return;
 	_pPush->setActionListener(this);
+#ifndef AS_NO_USING_CPP11
+	_pPush->setCallback(pushCallback);
+#endif
 }
 
 //开启推送
@@ -95,14 +114,14 @@ void Push::closePush()
 void Push::setAlias()
 {
 	if(!_pPush) return;
-	_pPush->setAlias("AnySDK");
+	_pPush->setAlias("anysdk");
 }
 
 //删除别名
 void Push::delAlias()
 {
 	if(!_pPush) return;
-	_pPush->delAlias("AnySDK");
+	_pPush->delAlias("anysdk");
 }
 
 //设置标签

@@ -1,312 +1,348 @@
 package com.anysdk.sample;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Vector;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
+import com.anysdk.framework.AdsWrapper;
+import com.anysdk.framework.IAPWrapper;
 import com.anysdk.framework.PluginWrapper;
-import com.anysdk.sample.wrapper;
+import com.anysdk.framework.PushWrapper;
+import com.anysdk.framework.ShareWrapper;
+import com.anysdk.framework.SocialWrapper;
+import com.anysdk.framework.UserWrapper;
 
-import android.os.Bundle;
-import android.os.Handler;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.ActivityManager.RunningAppProcessInfo;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.DataSetObserver;
+import android.graphics.drawable.Drawable;
+import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup.LayoutParams;
-import android.view.WindowManager;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 
-public class MainActivity extends Activity   implements OnClickListener{
-
+public class MainActivity extends Activity {
+	
 	static {
 		System.loadLibrary("game");
 	}
-	private static Activity mAct = null;
-	private static Handler mUIHandler = null;
-	private static boolean mFirst = false;
-	private static Dialog myDialog = null;
-	private final static String nd91Channle = "000007";
 
-	public static boolean isFirstBegin() {
-        Log.d("PluginDemo", "Is first begin : " + mFirst);
-        return mFirst;
-    }
 	
+	private static final String TAG_STRING = "ANYSDK";
+	private static Activity mAct;
+	private static Handler mUIHandler;
+	private ListView mainListView;
+	private SimpleAdapter adapter;
+	private List<Map<String, String>> sysList = new ArrayList<Map<String, String>>();
+
+	private String[] mainStrings = new String[] { "User System", "IAP System",
+			"Share System", "Social System", "Ads System", "Analytics System",
+			"Push System", "Crash System", "REC System"};
+
+	private String[] userStrings = new String[] { "return", "login",
+			"isLogined", "getUserID" };
+
+	private String[] iapStrings = new String[] { "return", "payForProduct",
+			"getOrderId" };
+
+	private String[] shareStrings = new String[] { "return", "share" };
+
+	private String[] socialStrings = new String[] { "return", "signIn",
+			"signOut", "submitScore", "showLeaderboard", "unlockAchievement",
+			"showAchievements" };
+
+	private String[] adsStrings = new String[] { "return", "Banner",
+			"FullScreen", "MoreAPP", "OfferWall", "queryPoints", "spendPoints" };
+	
+	private String[] adsFuntionStrings = new String[] {"return", "preloadAds1","preloadAds2",
+			"showAds1", "showAds2","hideAds1","hideAds2"};
+
+	private String[] analyticsStrings = new String[] { "return",
+			"startSession", "stopSession", "setSessionContinueMillis",
+			"logError", "logEvent", "logTimedEventBegin", "logTimedEventEnd" };
+
+	private String[] pushStrings = new String[] { "return", "startPush",
+			"closePush", "setAlias", "delAlias", "setTags", "delTags" };
+
+	private String[] crashStrings = new String[] { "return",
+			"setUserIdentifier", "reportException", "leaveBreadcrumb" };
+
+	private String[] recStrings = new String[] { "return", "startRecording",
+			"stopRecording", "share" };
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+
 		super.onCreate(savedInstanceState);
-		PluginWrapper.init(this);
-        wrapper.nativeInitPlugins();
-        
-		setContentView(R.layout.activity_main);
+		
+
 		mAct = this;
-        mUIHandler = new Handler();
+		mUIHandler = new Handler();
+		PluginWrapper.init(this);
+		wrapper.nativeInitPlugins();
 
-        
+		updataData("main","");
+		mainListView = new ListView(this);
+		adapter = new SimpleAdapter(this, sysList, R.layout.activity_first,
+				new String[] { "title" }, new int[] { R.id.title });
+		mainListView.setAdapter(adapter);
+		mainListView.setOnItemClickListener(new OnItemClickListener() {
 
-        Button btnUser = (Button) this.findViewById(R.id.userSystem);
-        btnUser.setOnClickListener(this);
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+					long arg3) {
+				HashMap<String, String> map = (HashMap<String, String>) mainListView
+						.getItemAtPosition(arg2);
+				String tagString = map.get("tag");
+				String titleString = map.get("title");
+				String lastString = map.get("last");
+				if (titleString.equals("return")) {
+					updataData(lastString, "main");
+					adapter.notifyDataSetChanged();
+					mainListView.setAdapter(adapter);
+				} else if (tagString.equals("main")) {
+					if (titleString.equals("User System")) {
+						updataData("user",tagString);
+					} else if (titleString.equals("IAP System")) {
+						updataData("iap",tagString);
+					} else if (titleString.equals("Ads System")) {
+						updataData("ads",tagString);
+					} else if (titleString.equals("Social System")) {
+						updataData("social",tagString);
+					} else if (titleString.equals("Share System")) {
+						updataData("share",tagString);
+					} else if (titleString.equals("Analytics System")) {
+						updataData("analytics",tagString);
+					} else if (titleString.equals("Push System")) {
+						updataData("push",tagString);
+					} else if (titleString.equals("Crash System")) {
+						updataData("crash",tagString);
+					} else if (titleString.equals("REC System")) {
+						updataData("rec",tagString);
+					}
+					adapter.notifyDataSetChanged();
+					mainListView.setAdapter(adapter);
+				} else if(tagString.equals("ads")){
+					if (titleString.equals("Banner")) {
+						updataData("Banner",tagString);
+					} else if (titleString.equals("FullScreen")) {
+						updataData("FullScreen",tagString);
+					} else if (titleString.equals("MoreAPP")) {
+						updataData("MoreAPP",tagString);
+					} else if (titleString.equals("OfferWall")) {
+						updataData("OfferWall",tagString);
+					} else {
+						Controller.onClick(tagString, titleString);
+					}
+					adapter.notifyDataSetChanged();
+					mainListView.setAdapter(adapter);
+				}
+				else {
+					Controller.onClick(tagString, titleString);
+				}
 
+			}
+		});
 
-        Button btnIAP = (Button) this.findViewById(R.id.iapSystem);
-        btnIAP.setOnClickListener(this);
-        
-        Button btnShare = (Button) this.findViewById(R.id.shareSystem);
-        btnShare.setOnClickListener(this);
-        
-        Button btnAds = (Button) this.findViewById(R.id.adsSystem);
-        btnAds.setOnClickListener(this);
-        
-        Button btnSocial = (Button) this.findViewById(R.id.socialSystem);
-        btnSocial.setOnClickListener(this);
-        
-        Button btnPush = (Button) this.findViewById(R.id.pushSystem);
-        btnPush.setOnClickListener(this);
+		setContentView(mainListView);
+	}
 
-        LinearLayout main = (LinearLayout) this.findViewById(R.id.main);
-       
-        if (wrapper.nativeGetChannelId().equals(nd91Channle)) {
-        	Button shop = new Button(this);
-        	shop.setOnClickListener(this);
-        	shop.setTag(nd91Channle);
-        	shop.setText("91 shop");
-        	main.addView(shop);
+	private void updataData(String tag,String last) {
+		sysList.clear();
+		List<String> list = new ArrayList<String>();
+		if (tag.equals("main")) {
+			list.addAll(Arrays.asList(mainStrings));
+		} else if (tag.equals("user")) {
+			list.addAll(Arrays.asList(userStrings));
+			list = Controller.extendUserFunction(list);
+		} else if (tag.equals("iap")) {
+			list.addAll(Arrays.asList(iapStrings));
+		} else if (tag.equals("share")) {
+			list.addAll(Arrays.asList(shareStrings));
+		} else if (tag.equals("ads")) {
+			list.addAll(Arrays.asList(adsStrings));
+		} else if (tag.equals("analytics")) {
+			list.addAll(Arrays.asList(analyticsStrings));
+			list = Controller.extendAnalyticsFunction(list);
+		} else if (tag.equals("social")) {
+			list.addAll(Arrays.asList(socialStrings));
+		} else if (tag.equals("push")) {
+			list.addAll(Arrays.asList(pushStrings));
+		} else if (tag.equals("crash")) {
+			list.addAll(Arrays.asList(crashStrings));
+		} else if (tag.equals("rec")) {
+			list.addAll(Arrays.asList(recStrings));
+			list = Controller.extendRECFunction(list);
+		} else if (tag.equals("Banner")) {
+			list.addAll(Arrays.asList(adsFuntionStrings));
+		} else if (tag.equals("FullScreen")) {
+			list.addAll(Arrays.asList(adsFuntionStrings));
+		} else if (tag.equals("MoreAPP")) {
+			list.addAll(Arrays.asList(adsFuntionStrings));
+		} else if (tag.equals("OfferWall")) {
+			list.addAll(Arrays.asList(adsFuntionStrings));
 		}
-        Log.d("AnySDK", wrapper.nativeGetCustomParam());
-        
-        if (wrapper.nativeGetChannelId().equals("000266")) {//移动基地
-        	Button showFloatWindow = new Button(this);
-        	showFloatWindow.setOnClickListener(this);
-        	showFloatWindow.setTag("showFloatWindow");
-        	showFloatWindow.setText("showFloatWindow");
-        	main.addView(showFloatWindow);
+		
+
+		for (String item : list) {
+			HashMap<String, String> map = new HashMap<String, String>();
+			map.put("title", item);
+			map.put("tag", tag);
+			map.put("last", last);
+			sysList.add(map);
 		}
-        if (wrapper.nativeGetChannelId().equals("000266")) {//移动基地
-        	Button dismissFloatWindow = new Button(this);
-        	dismissFloatWindow.setOnClickListener(this);
-        	dismissFloatWindow.setTag("dismissFloatWindow");
-        	dismissFloatWindow.setText("dismissFloatWindow");
-        	main.addView(dismissFloatWindow);
-        }
+	}
+
+	public static void showDialog(String title, String msg) {
+		final String curMsg = msg;
+		final String curTitle = title;
+
+		mUIHandler.post(new Runnable() {
+			@Override
+			public void run() {
+				new AlertDialog.Builder(mAct)
+						.setTitle(curTitle)
+						.setMessage(curMsg)
+						.setPositiveButton("Ok",
+								new DialogInterface.OnClickListener() {
+
+									@Override
+									public void onClick(DialogInterface dialog,
+											int which) {
+
+									}
+								}).create().show();
+			}
+		});
+	}
+
+	public void showTipDialog() {
+
+		mUIHandler.post(new Runnable() {
+			@Override
+			public void run() {
+				new AlertDialog.Builder(mAct)
+						.setTitle(R.string.paying_title)
+						.setMessage(R.string.paying_message)
+						.setPositiveButton("NO",
+								new DialogInterface.OnClickListener() {
+
+									@Override
+									public void onClick(DialogInterface dialog,
+											int which) {
+										/**
+										 * 重置支付状态
+										 */
+										wrapper.nativeResetPayState();
+									}
+								})
+						.setNegativeButton("YES",
+								new DialogInterface.OnClickListener() {
+
+									@Override
+									public void onClick(DialogInterface dialog,
+											int which) {
+
+									}
+								}).create().show();
+			}
+		});
+	}
+
+	public static void Exit() {
+		mAct.finish();
+		System.exit(0);
+
 	}
 
 	@Override
-	public void onClick(View arg0) {
+	protected void onDestroy() {
+		super.onDestroy();
+		PluginWrapper.onDestroy();
+		wrapper.nativeUnLoadPlugins();
+	};
 
-		switch (arg0.getId()) {	
-	    case R.id.userSystem:
-	    	showUserAction();
-	        break;
-	    case R.id.iapSystem:
-	    	showPayAction();
-	        break;
-	    case R.id.shareSystem:
-	    	showShareAction();
-	        break;
-	    case R.id.adsSystem:
-	    	showAdsAction();
-	        break;
-	    case R.id.socialSystem:
-	    	showSocialAction();
-	        break;
-	    case R.id.pushSystem:
-	    	showPushAction();
-	        break;
-	    case R.id.login:
-	    	wrapper.nativeLogin();
-	    	myDialog.dismiss();
-	        break;
-	    case R.id.pay:
-	    	wrapper.nativePay();
-	    	myDialog.dismiss();
-	        break;
-	    case R.id.share:
-	    	wrapper.nativeShare();
-	    	myDialog.dismiss();
-	        break;
-	    case R.id.show:
-	    	wrapper.nativeShowAds();
-	    	myDialog.dismiss();
-	        break;
-	    case R.id.hide:
-	    	wrapper.nativeHideAds();
-	    	myDialog.dismiss();
-	        break;
-	    case R.id.submitScore:
-	    	wrapper.nativeSubmitScore();
-	    	myDialog.dismiss();
-	        break;
-	    case R.id.showLeaderboard:
-	    	wrapper.nativeShowLeaderboard();
-	    	myDialog.dismiss();
-	        break;
-	    case R.id.unlockAchievement:
-	    	wrapper.nativeUnlockAchievement();
-	    	myDialog.dismiss();
-	        break;
-	    case R.id.showAchievements:
-	    	wrapper.nativeShowAchievements();
-	    	myDialog.dismiss();
-	        break;
-	    case R.id.closePush:
-	    	wrapper.nativeClosePush();
-	    	myDialog.dismiss();
-	        break;
-	    case R.id.setAlias:
-	    	wrapper.nativeSetAlias();
-	    	myDialog.dismiss();
-	        break;
-	    case R.id.delAlias:
-	    	wrapper.nativeDelAlias();
-	    	myDialog.dismiss();
-	        break;
-	    case R.id.setTags:
-	    	wrapper.nativeSetTags();
-	    	myDialog.dismiss();
-	        break;
-	    case R.id.delTags:
-	    	wrapper.nativeDelTags();
-	    	myDialog.dismiss();
-	        break;
-	    default:
-	    	if (myDialog != null) {
-	    		myDialog.dismiss();
-			}
-	    	
-	    	if (arg0.getTag().equals("logout")) {
-				wrapper.nativeLogout();
-			}
-		    else if (arg0.getTag().equals("enterPlatform")) {
-		    	wrapper.nativeEnterPlatform();
-			}
-		    else if (arg0.getTag().equals("showToolBar")) {
-		    	wrapper.nativeShowToolBar();
-			}
-		    else if (arg0.getTag().equals("hideToolBar")) {
-		    	wrapper.nativeHideToolBar();
-			}
-		    else if (arg0.getTag().equals("accountSwitch")) {
-		    	wrapper.nativeAccountSwitch();
-			}
-		    else if (arg0.getTag().equals("realNameRegister")) {
-		    	wrapper.nativeRealNameRegister();
-			}
-		    else if (arg0.getTag().equals("antiAddictionQuery")) {
-		    	wrapper.nativeAntiAddictionQuery();
-			}
-		    else if (arg0.getTag().equals("submitLoginGameRole")) {
-		    	wrapper.nativeSubmitLoginGameRole();
-			}
-		    else if (arg0.getTag().equals(nd91Channle)) {
-		    	showDialog("91 shop", "91 shop");
-			}
-		    else if (arg0.getTag().equals("showFloatWindow")) {
-		    	if (wrapper.nativeIsFunctionSupported("showFloatWindow")) {
-					wrapper.nativeExcuteFunction("showFloatWindow");
-				}
-		    }
-		    else if (arg0.getTag().equals("dismissFloatWindow")) {
-		    	if (wrapper.nativeIsFunctionSupported("dismissFloatWindow")) {
-					wrapper.nativeExcuteFunction("dismissFloatWindow");
-				}
-		    }
-		    else if (arg0.getTag().equals("isMusicEnabled")) {
-		    	if (wrapper.nativeIsFunctionSupported("isMusicEnabled")) {
-		    		wrapper.nativeExcuteFunction("isMusicEnabled");
-		    	}
-		    }
-	    	
-	        break;
-	       
-	    }
-	
+
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+		wrapper.nativeStopSession();
+		if (!isAppOnForeground()) {
+			isAppForeground = false;
+		}
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		PluginWrapper.onResume();
+		wrapper.nativeStartSession();
+		/**
+		 * 后台切换回来判断是否支持调用暂停界面接口
+		 */
+		if (!isAppForeground) {
+			wrapper.nativePause();
+			isAppForeground = true;
+		}
+	}
+
+	@Override
+	public void onPause() {
+		PluginWrapper.onPause();
+		super.onPause();
 	}
 	
-	@Override
+	 @Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		PluginWrapper.onActivityResult(requestCode, resultCode, data);
 	}
 
-	public static void showDialog(String title, String msg) {
-        final String curMsg = msg;
-        final String curTitle = title;
-        
-        mUIHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                new AlertDialog.Builder(mAct)
-                .setTitle(curTitle)
-                .setMessage(curMsg)
-                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                	
-                	@Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        
-                    }
-                }).create().show();
-            }
-        });
-    }
-	
-	public static void showTipDialog() {
-        
-        mUIHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                new AlertDialog.Builder(mAct)
-                .setTitle(R.string.paying_title)
-                .setMessage(R.string.paying_message)
-                .setPositiveButton("NO", new DialogInterface.OnClickListener() {
-                            
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        wrapper.nativeResetPayState();
-                    }
-                })
-                .setNegativeButton("YES", new DialogInterface.OnClickListener() {
-                            
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        
-                    }
-                }).create().show();
-            }
-        });
-    }
-	 
-	public static void Exit() {
-		mAct.finish();
-		System.exit(0);
- 
-	}
-	
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-		PluginWrapper.onDestroy();
-		wrapper.nativeDestroy();
-	}
-	 
 	@Override
 	protected void onNewIntent(Intent intent) {
-		super.onNewIntent(intent);
 		PluginWrapper.onNewIntent(intent);
+		super.onNewIntent(intent);
 	}
 
+	@Override
+	protected void onRestart() {
+		PluginWrapper.onRestart();
+		super.onRestart();
+	}
+	
 	public boolean isAppOnForeground() {
 		ActivityManager activityManager = (ActivityManager) getApplicationContext()
 				.getSystemService(Context.ACTIVITY_SERVICE);
 		String packageName = getApplicationContext().getPackageName();
-		List<RunningAppProcessInfo> appProcesses = activityManager.getRunningAppProcesses();
+		List<RunningAppProcessInfo> appProcesses = activityManager
+				.getRunningAppProcesses();
 		if (appProcesses == null)
 			return false;
 		for (RunningAppProcessInfo appProcess : appProcesses) {
@@ -316,79 +352,53 @@ public class MainActivity extends Activity   implements OnClickListener{
 			}
 		}
 		return false;
-	} 
-	
+	}
+
 	private boolean isAppForeground = true;
-	 
-	@Override
-	protected void onStop() {
-		super.onStop();
-		PluginWrapper.onStop();
-		wrapper.nativeStopSession();
-		if(!isAppOnForeground()){
-			isAppForeground = false;
-		}
-	}	
-	 
-	@Override
-	protected void onResume() {
-		super.onResume();
-		PluginWrapper.onResume();
-		wrapper.nativeStartSession();
-		if(!isAppForeground){
-			wrapper.nativePause();
-			isAppForeground = true;			
-		}
-	}
-	
-	@Override
-	public void onPause() {
-		super.onPause();
-		PluginWrapper.onPause();
-	}
-	
-	@Override
-	protected void onRestart() {
-		super.onRestart();
-		PluginWrapper.onRestart();
-	}	
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		
-		if(keyCode == KeyEvent.KEYCODE_BACK){
-
-			if (wrapper.nativeIsFunctionSupported("exit")) {
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			/**
+			 * 判断是否支持调用退出界面的接口
+			 */
+			if (wrapper.nativeUserIsFunctionSupported("exit")) {
 				wrapper.nativeExit();
-				
+
 				return true;
 			}
 		}
 		return super.onKeyDown(keyCode, event);
 	}
-
+	
 	private static int  getResourceId(String name, String type) {
 	    return mAct.getResources().getIdentifier(name, type, mAct.getPackageName());
 	}
-		
-	private static LinearLayout myLayout;
 	
-	public static void  ChoosePayMode(String[] payMode) {
+	private static LinearLayout myLayout;
+	/**
+	 * 
+	* @Title: ChoosePayMode 
+	* @Description: 多支付调用方法
+	* @param @param payMode     
+	* @return void   
+	* @throws
+	 */
+	public static void  ChoosePayMode(ArrayList<String> payMode) {
 		myLayout = new LinearLayout(mAct);
 		OnClickListener onclick = new OnClickListener() { 
 
 			@Override
 			public void onClick(View v) {
-				
 				wrapper.nativePayMode((String) v.getTag());
 			}
 	    };
-		for (int i = 0; i < payMode.length; i++) {
+		for (int i = 0; i < payMode.size(); i++) {
 			Button button = new Button(mAct);
-			String res = "Channel" + payMode[i];
+			String res = "Channel" + payMode.get(i);
 			button.setText(getResourceId(res,"string"));
 			button.setOnClickListener(onclick);
-			button.setTag(payMode[i]);
+			button.setTag(payMode.get(i));
 			myLayout.addView(button);
 		}
 			
@@ -399,207 +409,5 @@ public class MainActivity extends Activity   implements OnClickListener{
 	    	
 	   	dialog02.show();
 	}
-	
-	private void showUserAction() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        View view = View.inflate(this, R.layout.activity_user, null);
-        LinearLayout user = (LinearLayout) view.findViewById(R.id.user);
-        if(wrapper.nativeIsFunctionSupported("logout"))
-        {
-        	Button logoutButton = new Button(this);
-        	logoutButton.setOnClickListener(this);
-        	logoutButton.setTag("logout");
-        	logoutButton.setText("logout");
-        	user.addView(logoutButton);
-        	//this.addContentView(logoutButton, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-        }
-        if(wrapper.nativeIsFunctionSupported("enterPlatform"))
-        {
-        	Button enterPlatformButton = new Button(this);
-        	enterPlatformButton.setOnClickListener(this);
-        	enterPlatformButton.setTag("enterPlatform");
-        	enterPlatformButton.setText("enterPlatform");
-        	user.addView(enterPlatformButton);
-        	//this.addContentView(enterPlatformButton, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-        }
-        if(wrapper.nativeIsFunctionSupported("showToolBar"))
-        {
-        	Button showToolBarButton = new Button(this);
-        	showToolBarButton.setOnClickListener(this);
-        	showToolBarButton.setTag("showToolBar");
-        	showToolBarButton.setText("showToolBar");
-        	user.addView(showToolBarButton);
-        	//this.addContentView(showToolBarButton, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-        }
-        if(wrapper.nativeIsFunctionSupported("hideToolBar"))
-        {
-        	Button hideToolBarButton = new Button(this);
-        	hideToolBarButton.setOnClickListener(this);
-        	hideToolBarButton.setTag("hideToolBar");
-        	hideToolBarButton.setText("hideToolBar");
-        	user.addView(hideToolBarButton);
-        	//this.addContentView(hideToolBarButton, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-        }
-        if(wrapper.nativeIsFunctionSupported("accountSwitch"))
-        {
-        	Button accoutSwitchButton = new Button(this);
-        	accoutSwitchButton.setOnClickListener(this);
-        	accoutSwitchButton.setTag("accountSwitch");
-        	accoutSwitchButton.setText("accountSwitch");
-        	user.addView(accoutSwitchButton);
-        	//this.addContentView(accoutSwitchButton, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-        }
-        if(wrapper.nativeIsFunctionSupported("realNameRegister"))
-        {
-        	Button realNameRegisterButton = new Button(this);
-        	realNameRegisterButton.setOnClickListener(this);
-        	realNameRegisterButton.setTag("realNameRegister");
-        	realNameRegisterButton.setText("realNameRegister");
-        	user.addView(realNameRegisterButton);
-        	//this.addContentView(realNameRegisterButton, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-        }
-        if(wrapper.nativeIsFunctionSupported("antiAddictionQuery"))
-        {
-        	Button antiAddictionQueryButton = new Button(this);
-        	antiAddictionQueryButton.setOnClickListener(this);
-        	antiAddictionQueryButton.setTag("antiAddictionQuery");
-        	antiAddictionQueryButton.setText("antiAddictionQuery");
-        	user.addView(antiAddictionQueryButton);
-        	//this.addContentView(antiAddictionQueryButton, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-        }
-        
-        if(wrapper.nativeIsFunctionSupported("submitLoginGameRole"))
-        {
-        	Button submitLoginGameRoleButton = new Button(this);
-        	submitLoginGameRoleButton.setOnClickListener(this);
-        	submitLoginGameRoleButton.setTag("submitLoginGameRole");
-        	submitLoginGameRoleButton.setText("submitLoginGameRole");
-        	user.addView(submitLoginGameRoleButton);
-        	//this.addContentView(antiAddictionQueryButton, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-        }
-        
-        if(wrapper.nativeIsFunctionSupported("isMusicEnabled"))
-        {
-        	Button isMusicEnabled = new Button(this);
-        	isMusicEnabled.setOnClickListener(this);
-        	isMusicEnabled.setTag("isMusicEnabled");
-        	isMusicEnabled.setText("isMusicEnabled");
-        	user.addView(isMusicEnabled);
-        	//this.addContentView(antiAddictionQueryButton, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-        }
-        if(wrapper.nativeIsFunctionSupported("showFloatWindow"))
-        {
-        	Button showFloatWindow = new Button(this);
-        	showFloatWindow.setOnClickListener(this);
-        	showFloatWindow.setTag("showFloatWindow");
-        	showFloatWindow.setText("showFloatWindow");
-        	user.addView(showFloatWindow);
-        	//this.addContentView(antiAddictionQueryButton, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-        }
-        if(wrapper.nativeIsFunctionSupported("dismissFloatWindow"))
-        {
-        	Button dismissFloatWindow = new Button(this);
-        	dismissFloatWindow.setOnClickListener(this);
-        	dismissFloatWindow.setTag("dismissFloatWindow");
-        	dismissFloatWindow.setText("dismissFloatWindow");
-        	user.addView(dismissFloatWindow);
-        	//this.addContentView(antiAddictionQueryButton, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-        }
-        
-        
-        myDialog = builder.setView(view).create();
-
-        myDialog.getWindow().setLayout(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        myDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
-        myDialog.show();
-        
-
-
-        Button btnUser = (Button) view.findViewById(R.id.login);
-        btnUser.setOnClickListener(this);
-    }
 	 
-	private void showPayAction() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        View view = View.inflate(this, R.layout.activity_iap, null);
-        myDialog = builder.setView(view).create();
-
-        myDialog.show();
-        myDialog.getWindow().setLayout(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-
-        Button btnPay = (Button) myDialog.findViewById(R.id.pay);
-        btnPay.setOnClickListener(this);
-    }
-	 
-	private void showShareAction() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        View view = View.inflate(this, R.layout.activity_share, null);
-        myDialog = builder.setView(view).create();
-
-        myDialog.show();
-        myDialog.getWindow().setLayout(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-
-        Button btnShare = (Button) myDialog.findViewById(R.id.share);
-        btnShare.setOnClickListener(this);
-    }
-	 
-	private void showAdsAction() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        View view = View.inflate(this, R.layout.activity_ads, null);
-        myDialog = builder.setView(view).create();
-
-        myDialog.show();
-        myDialog.getWindow().setLayout(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-
-        Button btnShow = (Button) myDialog.findViewById(R.id.show);
-        btnShow.setOnClickListener(this);
-        
-        Button btnhide= (Button) myDialog.findViewById(R.id.hide);
-        btnhide.setOnClickListener(this);
-    }
-	 
-	private void showSocialAction() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        View view = View.inflate(this, R.layout.activity_social, null);
-        myDialog = builder.setView(view).create();
-
-        myDialog.show();
-        myDialog.getWindow().setLayout(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-
-        Button btnSubmitScore = (Button) myDialog.findViewById(R.id.submitScore);
-        btnSubmitScore.setOnClickListener(this);
-        
-        Button btnPay = (Button) myDialog.findViewById(R.id.showLeaderboard);
-        btnPay.setOnClickListener(this);
-        
-        Button btnUnlockAchievement = (Button) myDialog.findViewById(R.id.unlockAchievement);
-        btnUnlockAchievement.setOnClickListener(this);
-        
-        Button btnShowAchievements = (Button) myDialog.findViewById(R.id.showAchievements);
-        btnShowAchievements.setOnClickListener(this);
-    }
-	 
-	private void showPushAction() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        View view = View.inflate(this, R.layout.activity_push, null);
-        myDialog = builder.setView(view).create();
-
-        myDialog.show();
-        myDialog.getWindow().setLayout(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-
-        Button btnStopPush = (Button) myDialog.findViewById(R.id.closePush);
-        btnStopPush.setOnClickListener(this);
-        
-        Button btnSetAlias = (Button) myDialog.findViewById(R.id.setAlias);
-        btnSetAlias.setOnClickListener(this);
-        
-        Button btnDelAlias = (Button) myDialog.findViewById(R.id.delAlias);
-        btnDelAlias.setOnClickListener(this);
-        
-        Button btnSetTags = (Button) myDialog.findViewById(R.id.setTags);
-        btnSetTags.setOnClickListener(this);
-        
-        Button btnDelTags = (Button) myDialog.findViewById(R.id.delTags);
-        btnDelTags.setOnClickListener(this);
-    }
 }

@@ -16,6 +16,8 @@
 #import "Share.h"
 #import "Social.h"
 #import "Analytics.h"
+#import "Crash.h"
+#import "REC.h"
 #import "PluginChannel.h"
 
 #include <list>
@@ -56,6 +58,13 @@ static int push_count = sizeof(push_menu) / sizeof(push_menu[0]);
 
 static std::string social_menu[]= {"submit score", "show leaderboard", "unlock achievement", "show achievements"};
 static int social_count = sizeof(social_menu) / sizeof(social_menu[0]);
+
+
+static std::string rec_menu[]= {"start record", "stop record", "share", "pause Record", "resume Record", "showToolBar" , "hideToolBar" ,"showVideoCenter", "enterPlatform"};
+static int rec_count = sizeof(rec_menu) / sizeof(rec_menu[0]);
+
+static std::string crash_menu[]= {"setUserIdentifier", "reportException", "leaveBreadcrumb"};
+static int crash_count = sizeof(crash_menu) / sizeof(crash_menu[0]);
 
 #define SPACE_H 0.5
 
@@ -114,6 +123,12 @@ static UIButton* backBtn = nil;
         case ANALYTICS_SYSTEM:
             [self addCurrentView:analytics_count level:ANALYTICS_LEVEL menus:analytics_menu];
             break;
+        case CRASH_SYSTEM:
+            [self addCurrentView:crash_count level:CRASH_LEVEL menus:crash_menu];
+            break;
+        case REC_SYSTEM:
+            [self addCurrentView:rec_count level:REC_LEVEL menus:rec_menu];
+            break;
             
         default:
             break;
@@ -129,6 +144,72 @@ static UIButton* backBtn = nil;
 //    btn.backgroundColor = [UIColor grayColor];
     [[_mianCtrl view] addSubview:btn];
     return btn;
+}
+
+-(void)onCrashOperation:(int)idx
+{
+    NSLog(@"onCrashOperation:%d", idx);
+    Crash* _crash = Crash::getInstance();
+    if (_crash == NULL) {
+        return;
+    }
+    
+    switch (idx) {
+        case ACTION_SET_USER_IDENTIFIFER:
+            _crash->setUserIdentifier();
+            break;
+        case ACTION_REPORT_EXCEPTION:
+            _crash->reportException();
+            break;
+        case ACTION_LEAVE_BREAD_CRUMB:
+            _crash->leaveBreadcrumb();
+            break;
+    }
+    
+}
+
+
+-(void)onRECOperation:(int)idx
+{
+    NSLog(@"onRECOperation:%d", idx);
+    REC* _rec = REC::getInstance();
+    if (_rec == NULL) {
+        return;
+    }
+    
+    switch (idx) {
+        case ACTION_STARTRECORDING:
+            _rec->setMetaData();
+            _rec->startRecording();
+            break;
+        case ACTION_STOPRECORDING:
+            NSLog(@"isRecording:%s", _rec->isRecording()?"true":"false");
+            _rec->stopRecording();
+            break;
+        case ACTION_SHAREVIDEO:
+            _rec->share();
+            break;
+        case ACTION_PAUSECORDING:
+            _rec->pauseRecording();
+            break;
+        case ACTION_RESUMECORDING:
+            _rec->resumeRecording();
+            break;
+        case ACTION_SHOWTOOLBAR:
+            _rec->showToolBar();
+            break;
+        case ACTION_HIDETOOLBAR:
+            _rec->hideToolBar();
+            break;
+        case ACTION_SHOWVIDEOCENTER:
+            _rec->showVideoCenter();
+            break;
+        case ACTION_ENTERPLATFORM:
+            NSLog(@"isAvailable:%s", _rec->isAvailable()?"true":"false");
+            _rec->enterPlatform();
+            break;
+    }
+    
 }
 
 -(void)onPushOperation:(int)idx
@@ -462,6 +543,12 @@ static UIButton* backBtn = nil;
     if (idx == BACK_BUTTON) {
         [self hideCurView];
         [_mianCtrl showBaseBtns];
+    }
+    else if (idx>=REC_LEVEL) {
+        [self onRECOperation:idx-REC_LEVEL];
+    }
+    else if (idx>=CRASH_LEVEL) {
+        [self onCrashOperation:idx-CRASH_LEVEL];
     }
     else if (idx>=ANALYTICS_LEVEL) {
         [self onAnalyticsOperation:idx-ANALYTICS_LEVEL];

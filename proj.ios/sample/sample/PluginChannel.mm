@@ -62,9 +62,12 @@ void PluginChannel::purge()
     }
 }
 
-//使用anysdk.com的时候注释掉这个宏就可以
+//使用game.com的时候注释掉这个宏就可以
 //#define isQudaoInfo 1
-
+void userCallback(int code,string msg)
+{
+    printf("userCallback %d,%s",code,msg.c_str());
+}
 void PluginChannel::loadPlugins()
 {
     printf("Load plugins invoked\n");
@@ -93,7 +96,7 @@ void PluginChannel::loadPlugins()
     //对用户系统设置监听类
     if(AgentManager::getInstance()->getUserPlugin())
     {
-        AgentManager::getInstance()->getUserPlugin()->setActionListener(this);
+       // AgentManager::getInstance()->getUserPlugin()->setActionListener(this);
     }
     
     //对支付系统设置监听类
@@ -440,7 +443,20 @@ void PluginChannel::onRequestResult(RequestResultCode ret, const char* msg, AllP
 {
     //info: 商品获取到的信息，请在这里进行商品界面的展示。
     printf("get all iap-iphone products info:%lu\n", info.size());
-    _myProducts = info;
+    map<string,TProductInfo>::iterator iter = info.begin();
+    for (iter; iter != info.end(); iter++) {
+        map<string,string> item = iter->second;
+        map<string,string>::iterator it = item.find("productidentify");
+        if (it != item.end()) {
+            productInfo["Product_Id"] = it->second;
+        }
+        it = item.find("price");
+        if (it != item.end()) {
+            productInfo["Product_Price"] = it->second;
+        }
+        
+    }
+    
 }
 
 void PluginChannel::onPayResult(PayResultCode ret, const char* msg, TProductInfo info)

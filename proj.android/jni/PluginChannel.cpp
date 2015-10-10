@@ -5,6 +5,9 @@
 #include <stdlib.h>
 #include "Analytics.h"
 #include "Push.h"
+#ifndef AS_NO_USING_CPP11
+#include <functional>
+#endif
 
 using namespace anysdk::framework;
 
@@ -45,6 +48,115 @@ void CCExit()
 	}
 }
 
+void ShowTipDialog()
+{
+    PluginJniMethodInfo t;
+    if (PluginJniHelper::getStaticMethodInfo(t, "com/game/sample/MainActivity", "showTipDialog", "()V")) {
+        t.env->CallStaticVoidMethod(t.classID, t.methodID);
+        t.env->DeleteLocalRef(t.classID);
+    }
+
+
+}
+void userCallback(int code,string msg)
+{
+	LOGD("userCallback %d,%s",code,msg.c_str());
+	bool _userLogined = false;
+	switch(code)
+	{
+	case kInitSuccess://初始化SDK成功回调
+		break;
+	case kInitFail://初始化SDK失败回调
+		CCExit();
+		break;
+	case kLoginSuccess://登陆成功回调
+        _userLogined = true;
+        CCMessageBox(msg.c_str(), "User is  online");
+        if (PluginChannel::getInstance()->getChannelId() == "000255") {//UC渠道
+			LOGD("开始调用submitLoginGameRole函数");
+			PluginChannel::getInstance()->submitLoginGameRole();
+			LOGD("结束调用submitLoginGameRole函数");
+		}
+        break;
+	case kLoginNetworkError://登陆失败回调
+    case kLoginCancel://登陆取消回调
+	case kLoginFail://登陆失败回调
+    	CCMessageBox(msg.c_str(), "fail");
+    	_userLogined = false;
+    	Analytics::getInstance()->logError("login","fail");
+    	break;
+	case kLogoutSuccess://登出成功回调
+
+		break;
+	case kLogoutFail://登出失败回调
+		CCMessageBox(msg.c_str()  , "登出失败");
+		break;
+	case kPlatformEnter://平台中心进入回调
+		break;
+	case kPlatformBack://平台中心退出回调
+		break;
+	case kPausePage://暂停界面回调
+		break;
+	case kExitPage://退出游戏回调
+            CCExit();
+
+		break;
+	case kAntiAddictionQuery://防沉迷查询回调
+		CCMessageBox(msg.c_str()  , "防沉迷查询回调");
+		break;
+	case kRealNameRegister://实名注册回调
+		CCMessageBox(msg.c_str()  , "实名注册回调");
+		break;
+	case kAccountSwitchSuccess://切换账号成功回调
+		break;
+	case kAccountSwitchFail://切换账号成功回调
+		break;
+	case kOpenShop://打开游戏商店回调
+		break;
+	default:
+		break;
+	}
+}
+
+void iapCallback(int code,string msg)
+{
+	LOGD("iapCallback %d,%s",code,msg.c_str());
+	  std::string temp = "fail";
+		switch(code)
+		{
+		case kPaySuccess://支付成功回调
+			temp = "Success";
+			CCMessageBox(temp.c_str() , temp.c_str() );
+			break;
+		case kPayFail://支付失败回调
+			CCMessageBox(temp.c_str()  , temp.c_str() );
+			break;
+		case kPayCancel://支付取消回调
+			CCMessageBox(temp.c_str()  , "Cancel" );
+			break;
+		case kPayNetworkError://支付超时回调
+			CCMessageBox(temp.c_str()  , "NetworkError");
+			break;
+		case kPayProductionInforIncomplete://支付信息不完整
+			CCMessageBox(temp.c_str()  , "ProductionInforIncomplete");
+			break;
+		/**
+		 * 新增加:正在进行中回调
+		 * 支付过程中若SDK没有回调结果，就认为支付正在进行中
+		 * 游戏开发商可让玩家去判断是否需要等待，若不等待则进行下一次的支付
+		 */
+		case kPayNowPaying:
+			ShowTipDialog();
+			break;
+		case kPayRechargeSuccess: //充值成功回调
+			break;
+		default:
+			break;
+		}
+
+
+}
+
 
 PluginChannel* PluginChannel::_pInstance = NULL;
 
@@ -59,7 +171,7 @@ PluginChannel::PluginChannel()
 
 PluginChannel::~PluginChannel()
 {
-    unloadPlugins();
+    //unloadPlugins();
 }
 
 PluginChannel* PluginChannel::getInstance()
@@ -80,6 +192,7 @@ void PluginChannel::purge()
 }
 
 
+
 void PluginChannel::loadPlugins()
 {
     LOGD("Load plugins invoked");
@@ -87,10 +200,10 @@ void PluginChannel::loadPlugins()
      * appKey、appSecret、privateKey不能使用Sample中的值，需要从打包工具中游戏管理界面获取，替换
      * oauthLoginServer参数是游戏服务提供的用来做登陆验证转发的接口地址。
      */
-    std::string oauthLoginServer = "http://oauth.anysdk.com/api/OauthLoginDemo/Login.php";
-    std::string appKey = "AEE563E8-C007-DC32-5535-0518D941D6C2";
-    std::string appSecret = "b9fada2f86e3f73948f52d9673366610";
-    std::string privateKey = "0EE38DB7E37D13EBC50E329483167860";
+    std::string oauthLoginServer = "http://oauth.game.com/api/OauthLoginDemo/Login.php";
+    std::string appKey = "D22AB625-CD4C-2167-D35C-C5A03E5896F5";
+    std::string appSecret = "8959c650440b6b051d6af588d7f965f3";
+    std::string privateKey = "BA26F2670407E0B8664DDA544026FA54";
     
 	_pAgent = AgentManager::getInstance();
 	_pAgent->init(appKey,appSecret,privateKey,oauthLoginServer);
@@ -103,8 +216,15 @@ void PluginChannel::loadPlugins()
 		_pUser = AgentManager::getInstance()->getUserPlugin();
 
 		if(!_pUser) break;
+
+
 		//对用户系统设置监听类
 		_pUser->setActionListener(this);
+
+#ifndef AS_NO_USING_CPP11
+		_pUser->setCallback(userCallback);
+		AgentManager::getInstance()->getCustomPlugin()->setCallback(userCallback);
+#endif
 
 
 	}while(0);
@@ -116,6 +236,9 @@ void PluginChannel::loadPlugins()
     for(iter = _pluginsIAPMap->begin(); iter != _pluginsIAPMap->end(); iter++)
     {
     	(iter->second)->setResultListener(this);
+#ifndef AS_NO_USING_CPP11
+    	(iter->second)->setCallback(iapCallback);
+#endif
     }
 
     do
@@ -135,6 +258,7 @@ void PluginChannel::loadPlugins()
 }
 
 
+
 void PluginChannel::unloadPlugins()
 {
     LOGD("Unload plugins invoked");
@@ -148,9 +272,18 @@ void PluginChannel::unloadPlugins()
 
 void PluginChannel::login()
 {
+
+	_pUser->setActionListener(this);
 	if(!_pUser) return;
 	_pUser->login();
 	_pAnalytics->logEvent("login");
+}
+
+bool PluginChannel::isLogined()
+{
+	if(!_pUser) return false;
+
+	return _pUser->isLogined();
 }
 
 void PluginChannel::logout()
@@ -170,7 +303,7 @@ void ChoosePayMode(std::vector<std::string>& pluginId)
 {
 	PluginJniMethodInfo t;
 	if (PluginJniHelper::getStaticMethodInfo(t,
-	    "com/anysdk/sample/MainActivity",
+	    "com/game/sample/MainActivity",
 	    "ChoosePayMode",
 	     "([Ljava/lang/String;)V"))
 	{
@@ -262,6 +395,18 @@ void PluginChannel::payMode(std::string id)
 	}
 }
 
+std::string PluginChannel::getOrderId()
+{
+	std::map<std::string , ProtocolIAP*>::iterator iter;
+	iter = _pluginsIAPMap->begin();
+	if(iter != _pluginsIAPMap->end())
+	{
+		return (iter->second)->getOrderId();
+	}
+	return "";
+}
+
+
 
 void PluginChannel::enterPlatform()
 {
@@ -341,19 +486,11 @@ void PluginChannel::submitLoginGameRole()
 	_pUser->callFuncWithParam("submitLoginGameRole",&data,NULL);
 }
 
-void ShowTipDialog()
-{
-    PluginJniMethodInfo t;
-    if (PluginJniHelper::getStaticMethodInfo(t, "com/anysdk/sample/MainActivity", "showTipDialog", "()V")) {
-        t.env->CallStaticVoidMethod(t.classID, t.methodID);
-        t.env->DeleteLocalRef(t.classID);
-    }
 
-
-}
 
 void PluginChannel::onPayResult(PayResultCode ret, const char* msg, TProductInfo info)
 {
+	LOGD("onPayResult%d%s",ret,msg);
 	  std::string temp = "fail";
 		switch(ret)
 		{

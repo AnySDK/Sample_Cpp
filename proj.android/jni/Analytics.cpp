@@ -16,6 +16,115 @@ void Java_com_anysdk_sample_wrapper_nativeStopSession(JNIEnv*  env, jobject thiz
 {
 	Analytics::getInstance()->stopSession();
 }
+
+jboolean Java_com_anysdk_sample_wrapper_nativeAnalyticsIsFunctionSupported(JNIEnv*  env, jobject thiz, jstring code)
+{
+	std::string strClassName = PluginJniHelper::jstring2string(code);
+	return (jboolean)Analytics::getInstance()->isFunctionSupported(strClassName);
+}
+
+void Java_com_anysdk_sample_wrapper_nativeSetSessionContinueMillis(JNIEnv*  env, jobject thiz)
+{
+	Analytics::getInstance()->setSessionContinueMillis(1000);
+}
+
+void Java_com_anysdk_sample_wrapper_nativeLogError(JNIEnv*  env, jobject thiz)
+{
+	Analytics::getInstance()->logError("error","anysdk");
+}
+
+void Java_com_anysdk_sample_wrapper_nativeLogEvent(JNIEnv*  env, jobject thiz)
+{
+	Analytics::getInstance()->logEvent("anysdk");
+}
+
+void Java_com_anysdk_sample_wrapper_nativeLogTimedEventBegin(JNIEnv*  env, jobject thiz)
+{
+	Analytics::getInstance()->logTimedEventBegin("anysdk");
+}
+
+void Java_com_anysdk_sample_wrapper_nativeLogTimedEventEnd(JNIEnv*  env, jobject thiz)
+{
+	Analytics::getInstance()->logTimedEventEnd("anysdk");
+}
+
+void Java_com_anysdk_sample_wrapper_nativeSetCaptureUncaughtException(JNIEnv*  env, jobject thiz)
+{
+	Analytics::getInstance()->setCaptureUncaughtException(true);
+}
+
+void Java_com_anysdk_sample_wrapper_nativeSetAccount(JNIEnv*  env, jobject thiz)
+{
+	Analytics::getInstance()->setAccount();
+}
+
+void Java_com_anysdk_sample_wrapper_nativeOnChargeRequest(JNIEnv*  env, jobject thiz)
+{
+	Analytics::getInstance()->onChargeRequest();
+}
+
+void Java_com_anysdk_sample_wrapper_nativeOnChargeSuccess(JNIEnv*  env, jobject thiz)
+{
+	Analytics::getInstance()->onChargeSuccess();
+}
+
+void Java_com_anysdk_sample_wrapper_nativeOnChargeFail(JNIEnv*  env, jobject thiz)
+{
+	Analytics::getInstance()->onChargeFail();
+}
+
+void Java_com_anysdk_sample_wrapper_nativeOnChargeOnlySuccess(JNIEnv*  env, jobject thiz)
+{
+	Analytics::getInstance()->onChargeOnlySuccess();
+}
+
+void Java_com_anysdk_sample_wrapper_nativeOnPurchase(JNIEnv*  env, jobject thiz)
+{
+	Analytics::getInstance()->onPurchase();
+}
+
+void Java_com_anysdk_sample_wrapper_nativeOnUse(JNIEnv*  env, jobject thiz)
+{
+	Analytics::getInstance()->onUse();
+}
+
+void Java_com_anysdk_sample_wrapper_nativeOnReward(JNIEnv*  env, jobject thiz)
+{
+	Analytics::getInstance()->onReward();
+}
+
+void Java_com_anysdk_sample_wrapper_nativeStartLevel(JNIEnv*  env, jobject thiz)
+{
+	Analytics::getInstance()->startLevel();
+}
+
+void Java_com_anysdk_sample_wrapper_nativeFinishLevel(JNIEnv*  env, jobject thiz)
+{
+	Analytics::getInstance()->finishLevel();
+}
+
+void Java_com_anysdk_sample_wrapper_nativeFailLevel(JNIEnv*  env, jobject thiz)
+{
+	Analytics::getInstance()->failLevel();
+}
+
+void Java_com_anysdk_sample_wrapper_nativeStartTask(JNIEnv*  env, jobject thiz)
+{
+	Analytics::getInstance()->startTask();
+}
+
+void Java_com_anysdk_sample_wrapper_nativeFinishTask(JNIEnv*  env, jobject thiz)
+{
+	Analytics::getInstance()->finishTask();
+}
+
+void Java_com_anysdk_sample_wrapper_nativeFailTask(JNIEnv*  env, jobject thiz)
+{
+	Analytics::getInstance()->failTask();
+}
+
+
+
 }
 
 Analytics* Analytics::_pInstance = NULL;
@@ -93,7 +202,7 @@ void Analytics::logEvent(string eventId, map<string, string> paramMap)
 void Analytics::logTimedEventBegin(string eventId)
 {
 	if(!_pAnalytics) return;
-	_pAnalytics->logTimedEventBegin("logTimedEventBegin");
+	_pAnalytics->logTimedEventBegin(eventId.c_str());
 }
 void Analytics::logTimedEventEnd(string eventId)
 {
