@@ -110,6 +110,9 @@ private:
     ProtocolIAP* getIAPIphone();
     ProtocolIAP* _iapIPhone;
     int _iapCount;
+    
+    ProtocolUser* _pUser;
+    AgentManager* _pAgent;
 };
 
 #endif

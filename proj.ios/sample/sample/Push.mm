@@ -7,7 +7,23 @@
 //
 
 #include "Push.h"
+#ifndef AS_NO_USING_CPP11
+#include <functional>
+#endif
 
+//Push回调函数
+void pushCallback(int code,string msg)
+{
+    printf("pushCallback %d -- %s",code,msg.c_str());
+    switch(code)
+    {
+        case kPushReceiveMessage://Push接受到消息回调
+            printf("kPushReceiveMessage  ==> %s",msg.c_str());
+            break;
+        default:
+            break;
+    }
+}
 
 Push* Push::_pInstance = NULL;
 
@@ -54,6 +70,9 @@ void Push::startPush()
     if(_push)
     {
         _push->startPush();
+#ifndef AS_NO_USING_CPP11
+        _pPush->setCallback(pushCallback);
+#endif
     }
 }
 
