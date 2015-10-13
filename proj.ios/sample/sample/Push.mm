@@ -71,7 +71,7 @@ void Push::startPush()
     {
         _push->startPush();
 #ifndef AS_NO_USING_CPP11
-        _pPush->setCallback(pushCallback);
+        _push->setCallback(pushCallback);
 #endif
     }
 }

@@ -1,4 +1,36 @@
 AnySDK_Framework_iOS_C++
+v2.1.0	— 
+库更新：
+1、集成iOS框架开发者需要在AppController中集成PluginApplicationDelegate重写以下相关函数:
+//about user system
+- (void)applicationDidEnterBackground:(UIApplication *)application ;
+- (void)applicationWillEnterForeground:(UIApplication *)application ;
+
+//about iap system
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation ;
+- (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url;
+
+//about push system
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken ;
+- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error ;
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo;
+- (void)application:(UIApplication *)application handleActionWithIdentifier:(NSString *)identifier forRemoteNotification:(NSDictionary *)userInfo completionHandler:(void(^)())completionHandler ;
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler ;
+
+2、在C++ Library Standard 不为 libc++时，需增加宏定义AS_NO_USING_CPP11
+
+3、新增崩溃分析类型SDK接口
+4、新增录屏分享类型SDK接口
+5、在C++ Library Standard 为libc++(支持C++11)时，设置listener可支持使用std::function参数传递
+6、网络请求增加重试机制
+7、优化框架代码，减少库大小
+8、PluginHelp新增接口
+a、解析xml接口getXMLInfoByFileName
+b、获取日志模式
+9、修复不添加SDK打包时不应调出Debug模式接口
+10、插件自助开发增加插件自定义类型
+
+AnySDK_Framework_iOS_C++
 v2.0.0	— 2015.5.28
 库更新：
 1、PluginHelper 为插件自助开发所需类

@@ -15,7 +15,7 @@
 using namespace anysdk::framework;
 using namespace std;
 
-#define IAP_IPHONE_ID "500026"
+#define APPSTORE_CHANNEL_ID "500026"
 
 class PluginChannel:public PayResultListener, public UserActionListener
 {
@@ -107,9 +107,7 @@ private:
     std::map<std::string, std::string> productInfo;
     std::map<std::string , ProtocolIAP*>* _pluginsIAPMap;
     
-    ProtocolIAP* getIAPIphone();
-    ProtocolIAP* _iapIPhone;
-    int _iapCount;
+    ProtocolIAP* _iapAppstore;
     
     ProtocolUser* _pUser;
     AgentManager* _pAgent;

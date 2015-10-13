@@ -141,7 +141,6 @@ static AllProductsInfo _myProducts;
 PluginChannel::PluginChannel()
 {
     _pluginsIAPMap = NULL;
-    _iapCount = 0;
 }
 
 PluginChannel::~PluginChannel()
@@ -193,7 +192,7 @@ void PluginChannel::loadPlugins()
     //使用框架中代理类进行插件初始化
     _pAgent->loadAllPlugins();
     
-    _pUser = _pUser;
+    _pUser = _pAgent->getUserPlugin();
     
     //对用户系统设置监听类
     if(_pUser)
@@ -206,7 +205,6 @@ void PluginChannel::loadPlugins()
     
     //对支付系统设置监听类
     _pluginsIAPMap  = _pAgent->getIAPPlugin();
-    _iapCount = _pluginsIAPMap->size();
     std::map<std::string , ProtocolIAP*>::iterator iter;
     for(iter = _pluginsIAPMap->begin(); iter != _pluginsIAPMap->end(); iter++)
     {
@@ -220,8 +218,6 @@ void PluginChannel::loadPlugins()
     Analytics::getInstance()->setSessionContinueMillis(15000);
     Analytics::getInstance()->logTimedEventBegin("Load");
     Push::getInstance()->startPush();
-    
-    _iapIPhone = getIAPIphone();
 }
 
 void PluginChannel::unloadPlugins()
@@ -304,37 +300,25 @@ void PluginChannel::payMode(std::string id)
     iter = _pluginsIAPMap->find(id);
     if(iter != _pluginsIAPMap->end())
     {
-        if (iter->first == IAP_IPHONE_ID) {
-            (iter->second)->payForProduct(_myProducts["2"]);
-        }
-        else{
-            (iter->second)->payForProduct(productInfo);
-        }
+        (iter->second)->payForProduct(productInfo);
     }
-}
-
-ProtocolIAP* PluginChannel::getIAPIphone()
-{
-    if(_pluginsIAPMap)
-    {
-        std::map<std::string , ProtocolIAP*>::iterator it = _pluginsIAPMap->begin();
-        for (; it != _pluginsIAPMap->end(); it++) {
-            if (it->first == IAP_IPHONE_ID) {
-                return it->second;
-            }
-        }
-    }
-    return NULL;
 }
 
 void PluginChannel::requestProducts()
 {
     printf("payRequest\n");
-    if ( NULL!= _iapIPhone ) {
+    if(_pluginsIAPMap)
+    {
+        std::map<std::string , ProtocolIAP*>::iterator it = _pluginsIAPMap->begin();
+        for (; it != _pluginsIAPMap->end(); it++) {
+            if (it->first == APPSTORE_CHANNEL_ID) {
+                _iapAppstore =  it->second;
+            }
+        }
+    }
+    if ( NULL!= _iapAppstore ) {
         PluginParam param1("PD_10005");
-        PluginParam param2("PD_10004");
-        PluginParam param3("PD_10003");
-        _iapIPhone->callFuncWithParam("requestProducts", &param1, &param2, &param3, NULL);
+        _iapAppstore->callFuncWithParam("requestProducts", &param1, NULL);
     }
     else{
         printf("iap iphone isn't find!\n");
@@ -343,35 +327,32 @@ void PluginChannel::requestProducts()
 
 void PluginChannel::pay()
 {
-    if ( NULL != _iapIPhone && _iapCount == 1) {
-        if (_myProducts.size() > 0) {
-            _iapIPhone->payForProduct(_myProducts["1"]);
-        }
-        else{
-            printf("product info is null, please request products info.\n");
-        }
-        return;
-    }
-    
     std::map<std::string , ProtocolIAP*>::iterator it = _pluginsIAPMap->begin();
     if(_pluginsIAPMap)
     {
         productInfo["Product_Price"] = "1";
-        if(_pAgent->getChannelId()=="000016" || _pAgent->getChannelId()=="000009"|| _pAgent->getChannelId()=="000349"){
+        if(_pAgent->getChannelId()=="000016" || _pAgent->getChannelId()=="000009"|| _pAgent->getChannelId()=="000349")
+        {
             productInfo["Product_Id"] = "1";
         }
+        else if(_pAgent->getChannelId()=="000056" )
+        {
+            //联通，传计费点
+            productInfo["Product_Id"] = "130201102727";
+        }
+        else if (_pAgent->getChannelId()=="000266")
+        {
+            //移动基地，传计费点后三位
+            productInfo["Product_Id"] = "001";
+        }
+        else if (_pAgent->getChannelId() == APPSTORE_CHANNEL_ID)
+        {
+            productInfo["Product_Id"] = "PD_01";
+        }
         else
-            if(_pAgent->getChannelId()=="000056" ){//联通，传计费点
-                productInfo["Product_Id"] = "130201102727";
-            }
-            else
-                if (_pAgent->getChannelId()=="000266") {//移动基地，传计费点后三位
-                    productInfo["Product_Id"] = "001";
-                }
-                else
-                {
-                    productInfo["Product_Id"] = "monthly";
-                }
+        {
+            productInfo["Product_Id"] = "monthly";
+        }
         
         productInfo["Product_Name"] = "豌豆荚测试a1";
         productInfo["Server_Id"] = "13";
