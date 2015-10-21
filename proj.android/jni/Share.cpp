@@ -3,9 +3,6 @@
 #include <android/log.h>
 #include "PluginJniHelper.h"
 #include <stdlib.h>
-#ifndef AS_NO_USING_CPP11
-#include <functional>
-#endif
 using namespace anysdk::framework;
 #define  LOG_TAG    "Share"
 #define  LOGD(...)  __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG,__VA_ARGS__);
@@ -16,27 +13,6 @@ void Java_com_anysdk_sample_wrapper_nativeShare(JNIEnv*  env, jobject thiz)
 }
 }
 
-void shareCallback(int code,string msg)
-{
-	LOGD("shareCallback %d -- %s",code,msg.c_str());
-	switch(code)
-	{
-	case kShareSuccess://分享成功回调
-		LOGD("onShareResult success");
-		break;
-	case kShareFail://分享失败回调
-		LOGD("onShareResult fail");
-		break;
-	case kShareCancel://分享取消回调
-		LOGD("onShareResult cancel");
-		break;
-	case kShareNetworkError://分享网络出错回调
-		LOGD("onShareResult error");
-		break;
-	default:
-		break;
-	}
-}
 
 Share* Share::_pInstance = NULL;
 
@@ -74,9 +50,6 @@ void Share::setListener()
 {
 	if(!_pShare) return;
 	_pShare->setResultListener(this);
-#ifndef AS_NO_USING_CPP11
-	_pShare->setCallback(shareCallback);
-#endif
 }
 
 void Share::share()

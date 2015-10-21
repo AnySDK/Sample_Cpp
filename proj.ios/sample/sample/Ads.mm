@@ -7,44 +7,6 @@
 //
 
 #import "Ads.h"
-#ifndef AS_NO_USING_CPP11
-#include <functional>
-#endif
-
-void adsCallback(int code,string msg)
-{
-    printf("adsCallback %d,%s",code,msg.c_str());
-    switch(code)
-    {
-        case kAdsReceived://广告接受成功回调
-            
-            break;
-        case kAdsShown://广告展示回调
-            
-            break;
-        case kAdsDismissed://广告消失回调
-            
-            break;
-        case kPointsSpendSucceed://积分设置成功回调
-            
-            break;
-        case kPointsSpendFailed://积分设置失败回调
-            
-            break;
-        case kNetworkError://网络错误回调
-            
-            break;
-        case kUnknownError://未知错误回调
-            
-            break;
-        case kOfferWallOnPointsChanged://积分改变回调
-            
-            break;
-        default:
-            break;
-    }
-    
-}
 
 Ads* Ads::_pInstance = NULL;
 
@@ -63,9 +25,6 @@ Ads* Ads::getInstance()
         _pInstance = new Ads();
         _pInstance->ads_plugin = AgentManager::getInstance()->getAdsPlugin();
         _pInstance->ads_plugin->setAdsListener(_pInstance);
-#ifndef AS_NO_USING_CPP11
-        _pInstance->ads_plugin->setCallback(adsCallback);
-#endif
         
         
     }

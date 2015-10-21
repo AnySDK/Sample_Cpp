@@ -8,33 +8,9 @@
 
 #include "Share.h"
 #include "PartViews.h"
-#ifndef AS_NO_USING_CPP11
-#include <functional>
-#endif
 
 #define  LOG_TAG    "Share"
 
-void shareCallback(int code,string msg)
-{
-    printf("shareCallback %d -- %s",code,msg.c_str());
-    switch(code)
-    {
-        case kShareSuccess://分享成功回调
-            printf("onShareResult success");
-            break;
-        case kShareFail://分享失败回调
-            printf("onShareResult fail");
-            break;
-        case kShareCancel://分享取消回调
-            printf("onShareResult cancel");
-            break;
-        case kShareNetworkError://分享网络出错回调
-            printf("onShareResult error");
-            break;
-        default:
-            break;
-    }
-}
 
 Share* Share::_pInstance = NULL;
 
@@ -73,9 +49,6 @@ void Share::setListener()
     
     if(!_pShare) return;
     _pShare->setResultListener(this);
-#ifndef AS_NO_USING_CPP11
-    _pShare->setCallback(shareCallback);
-#endif
     
 }
 

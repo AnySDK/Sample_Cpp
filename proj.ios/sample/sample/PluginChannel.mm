@@ -12,9 +12,6 @@
 #include <stdlib.h>
 #include "Analytics.h"
 #include "Push.h"
-#ifndef AS_NO_USING_CPP11
-#include <functional>
-#endif
 
 #include "PartViews.h"
 
@@ -37,101 +34,6 @@ void CCExit()
 void ShowTipDialog()
 {
     ////
-}
-
-void userCallback(int code,string msg)
-{
-    printf("userCallback %d,%s",code,msg.c_str());
-    bool _userLogined = false;
-    switch(code)
-    {
-        case kInitSuccess://初始化SDK成功回调
-            break;
-        case kInitFail://初始化SDK失败回调
-            CCExit();
-            break;
-        case kLoginSuccess://登陆成功回调
-            _userLogined = true;
-            //            CCMessageBox(msg, "User is  online");
-            CCMessageBox("Success!", "Login");
-            if (PluginChannel::getInstance()->getChannelId() == "000255") {//UC渠道
-                printf("开始调用submitLoginGameRole函数\n");
-                PluginChannel::getInstance()->submitLoginGameRole();
-                printf("结束调用submitLoginGameRole函数\n");
-            }
-            break;
-        case kLoginNoNeed:  //不需要登陆
-        case kLoginNetworkError://登陆失败回调
-        case kLoginCancel://登陆取消回调
-        case kLoginFail://登陆失败回调
-            CCMessageBox(msg.c_str(), "login");
-            _userLogined = false;
-            Analytics::getInstance()->logError("login","fail");
-            break;
-        case kLogoutSuccess://登出成功回调
-        case kLogoutFail://登出失败回调
-            CCMessageBox(msg.c_str()  , "Logout");
-            break;
-        case kPlatformEnter://平台中心进入回调
-            break;
-        case kPlatformBack://平台中心退出回调
-            break;
-        case kPausePage://暂停界面回调
-            break;
-        case kExitPage://退出游戏回调
-            CCExit();
-            
-            break;
-        case kAntiAddictionQuery://防沉迷查询回调
-            CCMessageBox(msg.c_str()  , "防沉迷查询回调");
-            break;
-        case kRealNameRegister://实名注册回调
-            CCMessageBox(msg.c_str()  , "实名注册回调");
-            break;
-        case kAccountSwitchSuccess://切换账号成功回调
-            break;
-        case kAccountSwitchFail://切换账号成功回调
-            break;
-        default:
-            break;
-    }
-}
-
-void iapCallback(int code,string msg)
-{
-    printf("iapCallback %d,%s",code,msg.c_str());
-    std::string temp = "fail";
-    switch(code)
-    {
-        case kPaySuccess://支付成功回调
-            temp = "Success";
-            CCMessageBox(temp.c_str() , temp.c_str() );
-            break;
-        case kPayFail://支付失败回调
-            CCMessageBox(temp.c_str()  , temp.c_str() );
-            break;
-        case kPayCancel://支付取消回调
-            CCMessageBox(temp.c_str()  , "Cancel" );
-            break;
-        case kPayNetworkError://支付超时回调
-            CCMessageBox(temp.c_str()  , "NetworkError");
-            break;
-        case kPayProductionInforIncomplete://支付超时回调
-            CCMessageBox(temp.c_str()  , "ProductionInforIncomplete");
-            break;
-            /**
-             * 新增加:正在进行中回调
-             * 支付过程中若SDK没有回调结果，就认为支付正在进行中
-             * 游戏开发商可让玩家去判断是否需要等待，若不等待则进行下一次的支付
-             */
-        case kPayNowPaying:
-            ShowTipDialog();
-            break;
-        default:
-            break;
-    }
-    
-    
 }
 
 
@@ -197,10 +99,6 @@ void PluginChannel::loadPlugins()
     //对用户系统设置监听类
     if(_pUser)
     {
-#ifndef AS_NO_USING_CPP11
-        _pUser->setCallback(userCallback);
-        _pAgent->getCustomPlugin()->setCallback(userCallback);
-#endif
     }
     
     //对支付系统设置监听类
@@ -209,9 +107,6 @@ void PluginChannel::loadPlugins()
     for(iter = _pluginsIAPMap->begin(); iter != _pluginsIAPMap->end(); iter++)
     {
         (iter->second)->setResultListener(this);
-#ifndef AS_NO_USING_CPP11
-        (iter->second)->setCallback(iapCallback);
-#endif
     }
     
     Analytics::getInstance()->setCaptureUncaughtException(true);

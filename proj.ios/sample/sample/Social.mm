@@ -7,35 +7,11 @@
 //
 
 #include "Social.h"
-#ifndef AS_NO_USING_CPP11
-#include <functional>
-#endif
 
 using namespace anysdk::framework;
 
 #define  LOG_TAG    "Social"
 
-void socialCallback(int code,string msg)
-{
-    printf("socialCallback %d -- %s",code,msg.c_str());
-    switch(code)
-    {
-        case kScoreSubmitSucceed://提交分数成功回调
-            
-            break;
-        case kScoreSubmitfail://提交分数失败回调
-            
-            break;
-        case kAchUnlockSucceed://解锁成F就成功回调
-            
-            break;
-        case kAchUnlockFail://解锁成就失败回调
-            
-            break;
-        default:
-            break;
-    }
-}
 
 Social* Social::_pInstance = NULL;
 

@@ -11,9 +11,6 @@
 #include <jni.h>
 #include <android/log.h>
 #include "PluginJniHelper.h"
-#ifndef AS_NO_USING_CPP11
-#include <functional>
-#endif
 #define  LOG_TAG    "REC"
 #define  LOGD(...)  __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG,__VA_ARGS__);
 extern "C"{
@@ -85,48 +82,6 @@ jboolean Java_com_anysdk_sample_wrapper_nativeRECIsFunctionSupported(JNIEnv*  en
 }
 }
 
-void recCallback(int code,string msg)
-{
-	LOGD("recCallback %d -- %s",code,msg.c_str());
-    switch(code)
-    {
-        case kRECInitSuccess://初始化成功
-            printf("kRECInitSuccess\n");
-            break;
-        case kRECInitFail://初始化失败
-            printf("kRECInitFail\n");
-            break;
-        case kRECStartRecording://开始录制
-            printf("kRECStartRecording \n");
-            break;
-        case kRECStopRecording://结束录制
-            printf("kRECStopRecording \n");
-            break;
-        case kRECPauseRecording://暂停录制
-            printf("kRECPauseRecording \n");
-            break;
-        case kRECResumeRecording://恢复录制
-            printf("kRECResumeRecording \n");
-            break;
-        case kRECEnterSDKPage://进入SDK页面
-            printf("kRECEnterSDKPage \n");
-            break;
-        case kRECQuitSDKPage://退出SDK页面
-            printf("kRECQuitSDKPage \n");
-            break;
-        case kRECShareSuccess://视频分享成功
-            printf("kRECShareSuccess \n");
-         //cocos2d::Application::getInstance()->applicationDidEnterBackground();
-            break;
-        case kRECShareFail://视频分享失败
-            printf("kRECShareFail \n");
-        // cocos2d::Application::getInstance()->applicationWillEnterForeground();
-            break;
-        default:
-            break;
-    }
-}
-
 REC* REC::_pInstance = NULL;
 
 REC::REC()
@@ -164,9 +119,6 @@ void REC::setListener()
     ProtocolREC * rec = AgentManager::getInstance()->getRECPlugin();
     if(!rec) return;
     rec->setResultListener(this);
-#ifndef AS_NO_USING_CPP11
-    rec->setCallback(recCallback);
-#endif
 }
 
 void REC::share()

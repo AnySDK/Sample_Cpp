@@ -3,9 +3,6 @@
 #include <android/log.h>
 #include "PluginJniHelper.h"
 #include <stdlib.h>
-#ifndef AS_NO_USING_CPP11
-#include <functional>
-#endif
 
 using namespace anysdk::framework;
 
@@ -37,41 +34,6 @@ jfloat Java_com_anysdk_sample_wrapper_nativeQueryPoints(JNIEnv*  env, jobject th
 }
 }
 
-void adsCallback(int code,string msg)
-{
-	LOGD("adsCallback %d,%s",code,msg.c_str());
-	switch(code)
-	{
-	case kAdsReceived://广告接受成功回调
-
-		break;
-	case kAdsShown://广告展示回调
-
-		break;
-	case kAdsDismissed://广告消失回调
-
-		break;
-	case kPointsSpendSucceed://积分设置成功回调
-
-		break;
-	case kPointsSpendFailed://积分设置失败回调
-
-		break;
-	case kNetworkError://网络错误回调
-
-		break;
-	case kUnknownError://未知错误回调
-
-		break;
-	case kOfferWallOnPointsChanged://积分改变回调
-
-		break;
-	default:
-		break;
-	}
-
-}
-
 
 Ads* Ads::_pInstance = NULL;
 
@@ -81,9 +43,6 @@ Ads::Ads()
 	if(!_pAds) return;
 
 	_pAds->setAdsListener(this);
-#ifndef AS_NO_USING_CPP11
-	_pAds->setCallback(adsCallback);
-#endif
 }
 
 Ads::~Ads()
