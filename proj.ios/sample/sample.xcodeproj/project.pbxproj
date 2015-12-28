@@ -8,11 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		AB0855C31BBA31210080A423 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = AB0855C21BBA31210080A423 /* libz.tbd */; };
-		AB149E111BC8A2D80032723B /* Crash.mm in Sources */ = {isa = PBXBuildFile; fileRef = AB149E0E1BC8A2D80032723B /* Crash.mm */; settings = {ASSET_TAGS = (); }; };
-		AB149E121BC8A2D80032723B /* REC.mm in Sources */ = {isa = PBXBuildFile; fileRef = AB149E101BC8A2D80032723B /* REC.mm */; settings = {ASSET_TAGS = (); }; };
-		AB149E411BC8A4FF0032723B /* libPluginProtocol.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AB149E3E1BC8A4FF0032723B /* libPluginProtocol.a */; settings = {ASSET_TAGS = (); }; };
-		AB149E421BC8A4FF0032723B /* manual.txt in Resources */ = {isa = PBXBuildFile; fileRef = AB149E3F1BC8A4FF0032723B /* manual.txt */; settings = {ASSET_TAGS = (); }; };
-		AB149E431BC8A4FF0032723B /* readme.txt in Resources */ = {isa = PBXBuildFile; fileRef = AB149E401BC8A4FF0032723B /* readme.txt */; settings = {ASSET_TAGS = (); }; };
+		AB149E111BC8A2D80032723B /* Crash.mm in Sources */ = {isa = PBXBuildFile; fileRef = AB149E0E1BC8A2D80032723B /* Crash.mm */; };
+		AB149E121BC8A2D80032723B /* REC.mm in Sources */ = {isa = PBXBuildFile; fileRef = AB149E101BC8A2D80032723B /* REC.mm */; };
+		AB149E411BC8A4FF0032723B /* libPluginProtocol.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AB149E3E1BC8A4FF0032723B /* libPluginProtocol.a */; };
+		AB149E421BC8A4FF0032723B /* manual.txt in Resources */ = {isa = PBXBuildFile; fileRef = AB149E3F1BC8A4FF0032723B /* manual.txt */; };
+		AB149E431BC8A4FF0032723B /* readme.txt in Resources */ = {isa = PBXBuildFile; fileRef = AB149E401BC8A4FF0032723B /* readme.txt */; };
 		D75A35F91A00B57D00FA5268 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D75A35F81A00B57D00FA5268 /* main.m */; };
 		D75A35FC1A00B57D00FA5268 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D75A35FB1A00B57D00FA5268 /* AppDelegate.m */; };
 		D75A35FF1A00B57D00FA5268 /* ViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = D75A35FE1A00B57D00FA5268 /* ViewController.mm */; };
@@ -476,7 +476,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_CXX_LIBRARY = "libstdc++";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				ENABLE_BITCODE = YES;
@@ -496,7 +496,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_CXX_LIBRARY = "libstdc++";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				ENABLE_BITCODE = YES;

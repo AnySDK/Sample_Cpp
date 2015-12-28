@@ -100,7 +100,7 @@ void PluginChannel::loadPlugins()
      * appKey、appSecret、privateKey不能使用Sample中的值，需要从打包工具中游戏管理界面获取，替换
      * oauthLoginServer参数是游戏服务提供的用来做登陆验证转发的接口地址。
      */
-    std::string oauthLoginServer = "http://oauth.game.com/api/OauthLoginDemo/Login.php";
+    std::string oauthLoginServer = "http://oauth.anysdk.com/api/OauthLoginDemo/Login.php";
     std::string appKey = "D22AB625-CD4C-2167-D35C-C5A03E5896F5";
     std::string appSecret = "8959c650440b6b051d6af588d7f965f3";
     std::string privateKey = "BA26F2670407E0B8664DDA544026FA54";
