@@ -108,6 +108,7 @@ public:
 		_paying = false;
 	}
     static bool _paying;
+    
 
 
 };

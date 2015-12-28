@@ -97,7 +97,6 @@ public:
     virtual  PushActionListener* getActionListener() = 0 ;
 
 
-
 };
 
 }} // namespace anysdk { namespace framework {

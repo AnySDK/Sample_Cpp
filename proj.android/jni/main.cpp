@@ -38,6 +38,19 @@ void Java_com_anysdk_sample_wrapper_nativeLogin(JNIEnv*  env, jobject thiz)
 {
     PluginChannel::getInstance()->login();
 }
+
+jstring
+Java_com_anysdk_sample_wrapper_nativeGetUserId(JNIEnv*  env, jobject thiz)
+{
+
+	return env->NewStringUTF(PluginChannel::getInstance()->getUserId().c_str());
+}
+
+jboolean Java_com_anysdk_sample_wrapper_nativeIsLogined(JNIEnv*  env, jobject thiz )
+{
+	return (jboolean) PluginChannel::getInstance()->isLogined();
+}
+
 void Java_com_anysdk_sample_wrapper_nativeLogout(JNIEnv*  env, jobject thiz)
 {
     PluginChannel::getInstance()->logout();
@@ -59,6 +72,13 @@ void Java_com_anysdk_sample_wrapper_nativeEnterPlatform(JNIEnv*  env, jobject th
 void Java_com_anysdk_sample_wrapper_nativePay(JNIEnv*  env, jobject thiz)
 {
     PluginChannel::getInstance()->pay();
+}
+
+jstring
+Java_com_anysdk_sample_wrapper_nativeGetOrderId(JNIEnv*  env, jobject thiz)
+{
+
+	return env->NewStringUTF(PluginChannel::getInstance()->getOrderId().c_str());
 }
 
 void Java_com_anysdk_sample_wrapper_nativeResetPayState(JNIEnv*  env, jobject thiz)
@@ -97,6 +117,11 @@ void Java_com_anysdk_sample_wrapper_nativeAntiAddictionQuery(JNIEnv*  env, jobje
 	PluginChannel::getInstance()->antiAddictionQuery();
 }
 
+void Java_com_anysdk_sample_wrapper_nativeSubmitLoginGameRole(JNIEnv*  env, jobject thiz)
+{
+	PluginChannel::getInstance()->submitLoginGameRole();
+}
+
 void Java_com_anysdk_sample_wrapper_nativePayMode(JNIEnv*  env, jobject thiz, jstring code)
 {
 	std::string strClassName = PluginJniHelper::jstring2string(code);
@@ -107,7 +132,7 @@ void Java_com_anysdk_sample_wrapper_nativePayMode(JNIEnv*  env, jobject thiz, js
 
 
 jboolean
-Java_com_anysdk_sample_wrapper_nativeIsFunctionSupported(JNIEnv*  env, jobject thiz, jstring code)
+Java_com_anysdk_sample_wrapper_nativeUserIsFunctionSupported(JNIEnv*  env, jobject thiz, jstring code)
 {
 	std::string strClassName = PluginJniHelper::jstring2string(code);
 	return (jboolean)PluginChannel::getInstance()->isFunctionSupported(strClassName);
@@ -138,10 +163,7 @@ Java_com_anysdk_sample_wrapper_nativeGetCustomParam(JNIEnv*  env, jobject thiz)
 	return env->NewStringUTF(AgentManager::getInstance()->getCustomParam().c_str());
 }
 
-void Java_com_anysdk_sample_wrapper_nativeSubmitLoginGameRole(JNIEnv*  env, jobject thiz)
-{
-	PluginChannel::getInstance()->submitLoginGameRole();
-}
+
 
 
 

@@ -72,7 +72,7 @@ void Push::setAlias()
 {
     if(_push)
     {
-        _push->setAlias("AnySDK");
+        _push->setAlias("game");
     }
     
     
@@ -85,7 +85,7 @@ void Push::delAlias()
 {
     if(_push)
     {
-        _push->delAlias("AnySDK");
+        _push->delAlias("game");
     }
     
 }

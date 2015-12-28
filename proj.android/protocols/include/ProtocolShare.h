@@ -53,8 +53,7 @@ public:
             SharedText                	The text need to share
             SharedImagePath				The full path of image file need to share (optinal)
     @warning For different plugin, the parameter should have other keys to share.
-             Look at the manual of plugins.
-    */
+             Look at the manual of plugins.    */
     virtual void share(TShareInfo info) = 0;
 
     /**

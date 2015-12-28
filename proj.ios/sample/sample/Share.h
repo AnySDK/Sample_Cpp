@@ -35,6 +35,7 @@ private:
     virtual ~Share();
     
     static Share* _pInstance;
+    ProtocolShare* _pShare;
     
 };
 

@@ -12,6 +12,7 @@ using namespace anysdk::framework;
 
 #define  LOG_TAG    "Social"
 
+
 Social* Social::_pInstance = NULL;
 
 Social::Social()

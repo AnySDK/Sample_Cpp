@@ -3,9 +3,7 @@
 #include <android/log.h>
 #include "PluginJniHelper.h"
 #include <stdlib.h>
-
 using namespace anysdk::framework;
-
 #define  LOG_TAG    "Share"
 #define  LOGD(...)  __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG,__VA_ARGS__);
 extern "C"{
@@ -15,12 +13,14 @@ void Java_com_anysdk_sample_wrapper_nativeShare(JNIEnv*  env, jobject thiz)
 }
 }
 
+
 Share* Share::_pInstance = NULL;
 
 Share::Share()
 {
 	_pShare = AgentManager::getInstance()->getSharePlugin();
 	setListener();
+
 }
 
 Share::~Share()

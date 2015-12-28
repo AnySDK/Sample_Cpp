@@ -98,7 +98,6 @@ public:
      @return the listener
      */
     virtual SocialListener* getListener() = 0;
-
 };
 
 }} // namespace anysdk { namespace framework {

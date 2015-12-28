@@ -8,8 +8,6 @@
 
 #import "Ads.h"
 
-
-
 Ads* Ads::_pInstance = NULL;
 
 Ads::Ads()

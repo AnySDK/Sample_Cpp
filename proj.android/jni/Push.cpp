@@ -3,7 +3,6 @@
 #include <android/log.h>
 #include "PluginJniHelper.h"
 #include <stdlib.h>
-
 using namespace anysdk::framework;
 
 #define  LOG_TAG    "Push"
@@ -39,6 +38,7 @@ void Java_com_anysdk_sample_wrapper_nativeDelTags(JNIEnv*  env, jobject thiz)
 	Push::getInstance()->delTags();
 }
 }
+
 
 Push* Push::_pInstance = NULL;
 
@@ -95,14 +95,14 @@ void Push::closePush()
 void Push::setAlias()
 {
 	if(!_pPush) return;
-	_pPush->setAlias("AnySDK");
+	_pPush->setAlias("anysdk");
 }
 
 //删除别名
 void Push::delAlias()
 {
 	if(!_pPush) return;
-	_pPush->delAlias("AnySDK");
+	_pPush->delAlias("anysdk");
 }
 
 //设置标签

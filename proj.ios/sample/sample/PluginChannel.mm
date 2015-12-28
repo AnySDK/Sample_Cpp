@@ -31,13 +31,18 @@ void CCExit()
     exit(0);
 }
 
+void ShowTipDialog()
+{
+    ////
+}
+
+
 PluginChannel* PluginChannel::_pInstance = NULL;
 static AllProductsInfo _myProducts;
 
 PluginChannel::PluginChannel()
 {
     _pluginsIAPMap = NULL;
-    _iapCount = 0;
 }
 
 PluginChannel::~PluginChannel()
@@ -62,9 +67,8 @@ void PluginChannel::purge()
     }
 }
 
-//使用anysdk.com的时候注释掉这个宏就可以
+//使用game.com的时候注释掉这个宏就可以
 //#define isQudaoInfo 1
-
 void PluginChannel::loadPlugins()
 {
     printf("Load plugins invoked\n");
@@ -84,21 +88,21 @@ void PluginChannel::loadPlugins()
     std::string privateKey = "963C4B4DA71BC51C69EB11D24D0C7D49";
     std::string oauthLoginServer = "http://oauth.anysdk.com/api/OauthLoginDemo/Login.php";
 #endif
-    
-    AgentManager::getInstance()->init(appKey,appSecret,privateKey,oauthLoginServer);
+    _pAgent = AgentManager::getInstance();
+    _pAgent->init(appKey,appSecret,privateKey,oauthLoginServer);
     
     //使用框架中代理类进行插件初始化
-    AgentManager::getInstance()->loadAllPlugins();
+    _pAgent->loadAllPlugins();
+    
+    _pUser = _pAgent->getUserPlugin();
     
     //对用户系统设置监听类
-    if(AgentManager::getInstance()->getUserPlugin())
+    if(_pUser)
     {
-        AgentManager::getInstance()->getUserPlugin()->setActionListener(this);
     }
     
     //对支付系统设置监听类
-    _pluginsIAPMap  = AgentManager::getInstance()->getIAPPlugin();
-    _iapCount = _pluginsIAPMap->size();
+    _pluginsIAPMap  = _pAgent->getIAPPlugin();
     std::map<std::string , ProtocolIAP*>::iterator iter;
     for(iter = _pluginsIAPMap->begin(); iter != _pluginsIAPMap->end(); iter++)
     {
@@ -109,31 +113,29 @@ void PluginChannel::loadPlugins()
     Analytics::getInstance()->setSessionContinueMillis(15000);
     Analytics::getInstance()->logTimedEventBegin("Load");
     Push::getInstance()->startPush();
-    
-    _iapIPhone = getIAPIphone();
 }
 
 void PluginChannel::unloadPlugins()
 {
     printf("Unload plugins invoked\n");
-    AgentManager::getInstance()->unloadAllPlugins();
+    _pAgent->unloadAllPlugins();
     Analytics::getInstance()->logTimedEventEnd("Unload");
 }
 
 std::string PluginChannel::getPluginId()
 {
-    if(AgentManager::getInstance()->getUserPlugin())
+    if(_pUser)
     {
-        return AgentManager::getInstance()->getUserPlugin()->getPluginId();
+        return _pUser->getPluginId();
     }
     return "";
 }
 
 void PluginChannel::login()
 {
-    if(AgentManager::getInstance()->getUserPlugin())
+    if(_pUser)
     {
-        AgentManager::getInstance()->getUserPlugin()->login();
+        _pUser->login();
         Analytics::getInstance()->logEvent("login");
     }
 }
@@ -141,21 +143,21 @@ void PluginChannel::login()
 
 void PluginChannel::logout()
 {
-    if(AgentManager::getInstance()->getUserPlugin())
+    if(_pUser)
     {
         if(isFunctionSupported("logout"))
         {
             
-            AgentManager::getInstance()->getUserPlugin()->callFuncWithParam("logout",NULL);
+            _pUser->callFuncWithParam("logout",NULL);
         }
     }
 }
 
 bool PluginChannel::isFunctionSupported(std::string strClassName)
 {
-    if(AgentManager::getInstance()->getUserPlugin())
+    if(_pUser)
     {
-        return AgentManager::getInstance()->getUserPlugin()->isFunctionSupported(strClassName);
+        return _pUser->isFunctionSupported(strClassName);
         
     }
     return false;
@@ -193,37 +195,25 @@ void PluginChannel::payMode(std::string id)
     iter = _pluginsIAPMap->find(id);
     if(iter != _pluginsIAPMap->end())
     {
-        if (iter->first == IAP_IPHONE_ID) {
-            (iter->second)->payForProduct(_myProducts["2"]);
-        }
-        else{
-            (iter->second)->payForProduct(productInfo);
-        }
+        (iter->second)->payForProduct(productInfo);
     }
-}
-
-ProtocolIAP* PluginChannel::getIAPIphone()
-{
-    if(_pluginsIAPMap)
-    {
-        std::map<std::string , ProtocolIAP*>::iterator it = _pluginsIAPMap->begin();
-        for (; it != _pluginsIAPMap->end(); it++) {
-            if (it->first == IAP_IPHONE_ID) {
-                return it->second;
-            }
-        }
-    }
-    return NULL;
 }
 
 void PluginChannel::requestProducts()
 {
     printf("payRequest\n");
-    if ( NULL!= _iapIPhone ) {
+    if(_pluginsIAPMap)
+    {
+        std::map<std::string , ProtocolIAP*>::iterator it = _pluginsIAPMap->begin();
+        for (; it != _pluginsIAPMap->end(); it++) {
+            if (it->first == APPSTORE_CHANNEL_ID) {
+                _iapAppstore =  it->second;
+            }
+        }
+    }
+    if ( NULL!= _iapAppstore ) {
         PluginParam param1("PD_10005");
-        PluginParam param2("PD_10004");
-        PluginParam param3("PD_10003");
-        _iapIPhone->callFuncWithParam("requestProducts", &param1, &param2, &param3, NULL);
+        _iapAppstore->callFuncWithParam("requestProducts", &param1, NULL);
     }
     else{
         printf("iap iphone isn't find!\n");
@@ -232,35 +222,32 @@ void PluginChannel::requestProducts()
 
 void PluginChannel::pay()
 {
-    if ( NULL != _iapIPhone && _iapCount == 1) {
-        if (_myProducts.size() > 0) {
-            _iapIPhone->payForProduct(_myProducts["1"]);
-        }
-        else{
-            printf("product info is null, please request products info.\n");
-        }
-        return;
-    }
-    
     std::map<std::string , ProtocolIAP*>::iterator it = _pluginsIAPMap->begin();
     if(_pluginsIAPMap)
     {
         productInfo["Product_Price"] = "1";
-        if(AgentManager::getInstance()->getChannelId()=="000016" || AgentManager::getInstance()->getChannelId()=="000009"|| AgentManager::getInstance()->getChannelId()=="000349"){
+        if(_pAgent->getChannelId()=="000016" || _pAgent->getChannelId()=="000009"|| _pAgent->getChannelId()=="000349")
+        {
             productInfo["Product_Id"] = "1";
         }
+        else if(_pAgent->getChannelId()=="000056" )
+        {
+            //联通，传计费点
+            productInfo["Product_Id"] = "130201102727";
+        }
+        else if (_pAgent->getChannelId()=="000266")
+        {
+            //移动基地，传计费点后三位
+            productInfo["Product_Id"] = "001";
+        }
+        else if (_pAgent->getChannelId() == APPSTORE_CHANNEL_ID)
+        {
+            productInfo["Product_Id"] = "PD_01";
+        }
         else
-            if(AgentManager::getInstance()->getChannelId()=="000056" ){//联通，传计费点
-                productInfo["Product_Id"] = "130201102727";
-            }
-            else
-                if (AgentManager::getInstance()->getChannelId()=="000266") {//移动基地，传计费点后三位
-                    productInfo["Product_Id"] = "001";
-                }
-                else
-                {
-                    productInfo["Product_Id"] = "monthly";
-                }
+        {
+            productInfo["Product_Id"] = "monthly";
+        }
         
         productInfo["Product_Name"] = "豌豆荚测试a1";
         productInfo["Server_Id"] = "13";
@@ -299,77 +286,77 @@ void PluginChannel::resetPayState()
 
 std::string PluginChannel::getUserId()
 {
-    if(AgentManager::getInstance()->getUserPlugin())
+    if(_pUser)
     {
-        return AgentManager::getInstance()->getUserPlugin()->getUserID();
+        return _pUser->getUserID();
     }
     return "";
 }
 
 void PluginChannel::enterPlatform()
 {
-    if(AgentManager::getInstance()->getUserPlugin())
+    if(_pUser)
     {
         //使用isFunctionSupported可先判断该插件是否支持该功能
         if(isFunctionSupported("enterPlatform"))
         {
-            AgentManager::getInstance()->getUserPlugin()->callFuncWithParam("enterPlatform",NULL);
+            _pUser->callFuncWithParam("enterPlatform",NULL);
         }
     }
 }
 
 void PluginChannel::showToolBar(ToolBarPlace place)
 {
-    if(AgentManager::getInstance()->getUserPlugin())
+    if(_pUser)
     {
         if(isFunctionSupported("showToolBar"))
         {
             PluginParam paramInfo(place);
-            AgentManager::getInstance()->getUserPlugin()->callFuncWithParam("showToolBar",&paramInfo,NULL);
+            _pUser->callFuncWithParam("showToolBar",&paramInfo,NULL);
         }
     }
 }
 
 void PluginChannel::hideToolBar()
 {
-    if(AgentManager::getInstance()->getUserPlugin())
+    if(_pUser)
     {
         if(isFunctionSupported("hideToolBar"))
         {
-            AgentManager::getInstance()->getUserPlugin()->callFuncWithParam("hideToolBar",NULL);
+            _pUser->callFuncWithParam("hideToolBar",NULL);
         }
     }
 }
 
 void PluginChannel::pause()
 {
-    if(AgentManager::getInstance()->getUserPlugin())
+    if(_pUser)
     {
         if(isFunctionSupported("pause"))
         {
-            AgentManager::getInstance()->getUserPlugin()->callFuncWithParam("pause",NULL);
+            _pUser->callFuncWithParam("pause",NULL);
         }
     }
 }
 
 void PluginChannel::destroy()
 {
-    if(AgentManager::getInstance()->getUserPlugin())
+    if(_pUser)
     {
         if(isFunctionSupported("destroy"))
         {
-            AgentManager::getInstance()->getUserPlugin()->callFuncWithParam("destroy",NULL);
+            _pUser->callFuncWithParam("destroy",NULL);
         }
     }
 }
 
 void PluginChannel::Exit()
 {
-    if(AgentManager::getInstance()->getUserPlugin())
+    if(_pUser)
     {
         if(isFunctionSupported("exit"))
         {
-            AgentManager::getInstance()->getUserPlugin()->callFuncWithParam("exit",NULL);
+            _pUser->callFuncWithParam("exit",NULL);
         }
         
     }
@@ -377,11 +364,11 @@ void PluginChannel::Exit()
 
 void PluginChannel::antiAddictionQuery()
 {
-    if(AgentManager::getInstance()->getUserPlugin())
+    if(_pUser)
     {
         if(isFunctionSupported("antiAddictionQuery"))
         {
-            AgentManager::getInstance()->getUserPlugin()->callFuncWithParam("antiAddictionQuery",NULL);
+            _pUser->callFuncWithParam("antiAddictionQuery",NULL);
         }
         
     }
@@ -389,11 +376,11 @@ void PluginChannel::antiAddictionQuery()
 
 void PluginChannel::accountSwitch()
 {
-    if(AgentManager::getInstance()->getUserPlugin())
+    if(_pUser)
     {
         if(isFunctionSupported("accountSwitch"))
         {
-            AgentManager::getInstance()->getUserPlugin()->callFuncWithParam("accountSwitch",NULL);
+            _pUser->callFuncWithParam("accountSwitch",NULL);
         }
         
     }
@@ -401,11 +388,11 @@ void PluginChannel::accountSwitch()
 
 void PluginChannel::realNameRegister()
 {
-    if(AgentManager::getInstance()->getUserPlugin())
+    if(_pUser)
     {
         if(isFunctionSupported("realNameRegister"))
         {
-            AgentManager::getInstance()->getUserPlugin()->callFuncWithParam("realNameRegister",NULL);
+            _pUser->callFuncWithParam("realNameRegister",NULL);
         }
         
     }
@@ -413,7 +400,7 @@ void PluginChannel::realNameRegister()
 
 void PluginChannel::submitLoginGameRole()
 {
-    if(AgentManager::getInstance()->getUserPlugin())
+    if(_pUser)
     {
         if(PluginChannel::getInstance()->isFunctionSupported("submitLoginGameRole"))
         {
@@ -426,21 +413,31 @@ void PluginChannel::submitLoginGameRole()
             userInfo["dataType"] = "ceshi : 1";
             userInfo["ext"] = "ceshi : login";
             PluginParam data(userInfo);
-            AgentManager::getInstance()->getUserPlugin()->callFuncWithParam("submitLoginGameRole",&data,NULL);
+            _pUser->callFuncWithParam("submitLoginGameRole",&data,NULL);
         }
     }
 }
 
-void ShowTipDialog()
-{
-    ////
-}
+
 
 void PluginChannel::onRequestResult(RequestResultCode ret, const char* msg, AllProductsInfo info)
 {
     //info: 商品获取到的信息，请在这里进行商品界面的展示。
     printf("get all iap-iphone products info:%lu\n", info.size());
-    _myProducts = info;
+    map<string,TProductInfo>::iterator iter = info.begin();
+    for (iter; iter != info.end(); iter++) {
+        map<string,string> item = iter->second;
+        map<string,string>::iterator it = item.find("productidentify");
+        if (it != item.end()) {
+            productInfo["Product_Id"] = it->second;
+        }
+        it = item.find("price");
+        if (it != item.end()) {
+            productInfo["Product_Price"] = it->second;
+        }
+        
+    }
+    
 }
 
 void PluginChannel::onPayResult(PayResultCode ret, const char* msg, TProductInfo info)
@@ -538,5 +535,5 @@ void PluginChannel::onActionResult(ProtocolUser* pPlugin, UserActionResultCode c
 
 std::string PluginChannel::getChannelId()
 {
-    return AgentManager::getInstance()->getChannelId();
+    return _pAgent->getChannelId();
 }

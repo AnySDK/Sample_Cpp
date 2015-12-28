@@ -3,13 +3,22 @@
 #include <android/log.h>
 #include "PluginJniHelper.h"
 #include <stdlib.h>
-
 using namespace anysdk::framework;
 
 #define  LOG_TAG    "Social"
 #define  LOGD(...)  __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG,__VA_ARGS__);
 
 extern "C"{
+void Java_com_anysdk_sample_wrapper_nativeSignIn(JNIEnv*  env, jobject thiz)
+{
+	Social::getInstance()->signIn();
+}
+
+void Java_com_anysdk_sample_wrapper_nativeSignOut(JNIEnv*  env, jobject thiz)
+{
+	Social::getInstance()->signOut();
+}
+
 void Java_com_anysdk_sample_wrapper_nativeSubmitScore(JNIEnv*  env, jobject thiz)
 {
 	Social::getInstance()->submitScore();
@@ -31,13 +40,13 @@ void Java_com_anysdk_sample_wrapper_nativeShowAchievements(JNIEnv*  env, jobject
 }
 }
 
-
 Social* Social::_pInstance = NULL;
 
 Social::Social()
 {
 	_pSocial = AgentManager::getInstance()->getSocialPlugin();
 	setListener();
+
 
 }
 
@@ -68,6 +77,20 @@ void Social::setListener()
 	if(!_pSocial) return;
 
 	_pSocial->setListener(this);
+}
+
+void Social::signIn()
+{
+	if(!_pSocial) return;
+
+	_pSocial->signIn();
+}
+
+void Social::signOut()
+{
+	if(!_pSocial) return;
+
+	_pSocial->signOut();
 }
 
 void Social::submitScore()
@@ -104,6 +127,7 @@ void Social::showAchievements()
 //社交回调函数
 void Social::onSocialResult(SocialRetCode code, const char* msg)
 {
+	LOGD("onSocialResult %d -- %s",code,msg);
 	switch(code)
 	{
 	case kScoreSubmitSucceed://提交分数成功回调

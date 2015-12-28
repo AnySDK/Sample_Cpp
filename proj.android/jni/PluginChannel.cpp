@@ -45,6 +45,18 @@ void CCExit()
 	}
 }
 
+void ShowTipDialog()
+{
+    PluginJniMethodInfo t;
+    if (PluginJniHelper::getStaticMethodInfo(t, "com/game/sample/MainActivity", "showTipDialog", "()V")) {
+        t.env->CallStaticVoidMethod(t.classID, t.methodID);
+        t.env->DeleteLocalRef(t.classID);
+    }
+
+
+}
+
+
 
 PluginChannel* PluginChannel::_pInstance = NULL;
 
@@ -59,7 +71,7 @@ PluginChannel::PluginChannel()
 
 PluginChannel::~PluginChannel()
 {
-    unloadPlugins();
+    //unloadPlugins();
 }
 
 PluginChannel* PluginChannel::getInstance()
@@ -80,6 +92,7 @@ void PluginChannel::purge()
 }
 
 
+
 void PluginChannel::loadPlugins()
 {
     LOGD("Load plugins invoked");
@@ -87,10 +100,10 @@ void PluginChannel::loadPlugins()
      * appKey、appSecret、privateKey不能使用Sample中的值，需要从打包工具中游戏管理界面获取，替换
      * oauthLoginServer参数是游戏服务提供的用来做登陆验证转发的接口地址。
      */
-    std::string oauthLoginServer = "http://oauth.anysdk.com/api/OauthLoginDemo/Login.php";
-    std::string appKey = "AEE563E8-C007-DC32-5535-0518D941D6C2";
-    std::string appSecret = "b9fada2f86e3f73948f52d9673366610";
-    std::string privateKey = "0EE38DB7E37D13EBC50E329483167860";
+    std::string oauthLoginServer = "http://oauth.game.com/api/OauthLoginDemo/Login.php";
+    std::string appKey = "D22AB625-CD4C-2167-D35C-C5A03E5896F5";
+    std::string appSecret = "8959c650440b6b051d6af588d7f965f3";
+    std::string privateKey = "BA26F2670407E0B8664DDA544026FA54";
     
 	_pAgent = AgentManager::getInstance();
 	_pAgent->init(appKey,appSecret,privateKey,oauthLoginServer);
@@ -103,8 +116,11 @@ void PluginChannel::loadPlugins()
 		_pUser = AgentManager::getInstance()->getUserPlugin();
 
 		if(!_pUser) break;
+
+
 		//对用户系统设置监听类
 		_pUser->setActionListener(this);
+
 
 
 	}while(0);
@@ -135,6 +151,7 @@ void PluginChannel::loadPlugins()
 }
 
 
+
 void PluginChannel::unloadPlugins()
 {
     LOGD("Unload plugins invoked");
@@ -148,9 +165,18 @@ void PluginChannel::unloadPlugins()
 
 void PluginChannel::login()
 {
+
+	_pUser->setActionListener(this);
 	if(!_pUser) return;
 	_pUser->login();
 	_pAnalytics->logEvent("login");
+}
+
+bool PluginChannel::isLogined()
+{
+	if(!_pUser) return false;
+
+	return _pUser->isLogined();
 }
 
 void PluginChannel::logout()
@@ -170,7 +196,7 @@ void ChoosePayMode(std::vector<std::string>& pluginId)
 {
 	PluginJniMethodInfo t;
 	if (PluginJniHelper::getStaticMethodInfo(t,
-	    "com/anysdk/sample/MainActivity",
+	    "com/game/sample/MainActivity",
 	    "ChoosePayMode",
 	     "([Ljava/lang/String;)V"))
 	{
@@ -262,6 +288,18 @@ void PluginChannel::payMode(std::string id)
 	}
 }
 
+std::string PluginChannel::getOrderId()
+{
+	std::map<std::string , ProtocolIAP*>::iterator iter;
+	iter = _pluginsIAPMap->begin();
+	if(iter != _pluginsIAPMap->end())
+	{
+		return (iter->second)->getOrderId();
+	}
+	return "";
+}
+
+
 
 void PluginChannel::enterPlatform()
 {
@@ -341,19 +379,11 @@ void PluginChannel::submitLoginGameRole()
 	_pUser->callFuncWithParam("submitLoginGameRole",&data,NULL);
 }
 
-void ShowTipDialog()
-{
-    PluginJniMethodInfo t;
-    if (PluginJniHelper::getStaticMethodInfo(t, "com/anysdk/sample/MainActivity", "showTipDialog", "()V")) {
-        t.env->CallStaticVoidMethod(t.classID, t.methodID);
-        t.env->DeleteLocalRef(t.classID);
-    }
 
-
-}
 
 void PluginChannel::onPayResult(PayResultCode ret, const char* msg, TProductInfo info)
 {
+	LOGD("onPayResult%d%s",ret,msg);
 	  std::string temp = "fail";
 		switch(ret)
 		{

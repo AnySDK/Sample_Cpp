@@ -28,6 +28,9 @@ public:
    	//登陆
     void login();
 
+    //获取用户唯一标识符，进行游戏端登陆
+    bool isLogined();
+
     //登出
     void logout();
 
@@ -68,7 +71,7 @@ public:
    	//支付系统功能
     void pay();
     void resetPayState();
-
+    std::string getOrderId();
 
 
 
