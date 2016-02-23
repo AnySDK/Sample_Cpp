@@ -99,6 +99,7 @@ void PluginChannel::loadPlugins()
     //对用户系统设置监听类
     if(_pUser)
     {
+        _pUser->setActionListener(this);
     }
     
     //对支付系统设置监听类
