@@ -381,5 +381,5 @@ void Analytics::failTask()
 bool Analytics::isFunctionSupported(string functionName)
 {
 	if(!_pAnalytics) return false;
-	_pAnalytics->isFunctionSupported(functionName);
+	return _pAnalytics->isFunctionSupported(functionName);
 }
