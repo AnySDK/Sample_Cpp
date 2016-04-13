@@ -18,6 +18,7 @@
 #import "Analytics.h"
 #import "Crash.h"
 #import "REC.h"
+#import "AdTracking.h"
 #import "PluginChannel.h"
 
 #include <list>
@@ -65,6 +66,10 @@ static int rec_count = sizeof(rec_menu) / sizeof(rec_menu[0]);
 
 static std::string crash_menu[]= {"setUserIdentifier", "reportException", "leaveBreadcrumb"};
 static int crash_count = sizeof(crash_menu) / sizeof(crash_menu[0]);
+
+
+static std::string adtracking_menu[]= {"onRegister", "onLogin", "onPay", "trackEvent", "onStartToPay", "onCreateRole", "onLevelUp"};
+static int adtracking_count = sizeof(adtracking_menu) / sizeof(adtracking_menu[0]);
 
 #define SPACE_H 0.5
 
@@ -129,6 +134,9 @@ static UIButton* backBtn = nil;
         case REC_SYSTEM:
             [self addCurrentView:rec_count level:REC_LEVEL menus:rec_menu];
             break;
+        case ADTRACKING_SYSTEM:
+            [self addCurrentView:adtracking_count level:ADTRACKING_LEVEL menus:adtracking_menu];
+            break;
             
         default:
             break;
@@ -144,6 +152,40 @@ static UIButton* backBtn = nil;
 //    btn.backgroundColor = [UIColor grayColor];
     [[_mianCtrl view] addSubview:btn];
     return btn;
+}
+
+-(void)onAdTrackingOperation:(int)idx
+{
+    NSLog(@"onAdTrackingOperation:%d", idx);
+    AdTracking* _adtracking = AdTracking::getInstance();
+    if (_adtracking == NULL) {
+        return;
+    }
+    
+    switch (idx) {
+        case ACTION_ON_REGISTER:
+            _adtracking->onRegister();
+            break;
+        case ACTION_ON_LOGIN:
+            _adtracking->onLogin();
+            break;
+        case ACTION_ON_PAY:
+            _adtracking->onPay();
+            break;
+        case ACTION_ON_TRACK_EVENT:
+            _adtracking->trackEvent();
+            break;
+        case ACTION_ON_CREATE_ROLE:
+            _adtracking->onCreateRole();
+            break;
+        case ACTION_ON_LEVEL_UP:
+            _adtracking->onLevelUp();
+            break;
+        case ACTION_ON_START_TO_PAY:
+            _adtracking->onStartToPay();
+            break;
+    }
+    
 }
 
 -(void)onCrashOperation:(int)idx
@@ -543,6 +585,9 @@ static UIButton* backBtn = nil;
     if (idx == BACK_BUTTON) {
         [self hideCurView];
         [_mianCtrl showBaseBtns];
+    }
+    else if (idx>=ADTRACKING_LEVEL) {
+        [self onAdTrackingOperation:idx-ADTRACKING_LEVEL];
     }
     else if (idx>=REC_LEVEL) {
         [self onRECOperation:idx-REC_LEVEL];

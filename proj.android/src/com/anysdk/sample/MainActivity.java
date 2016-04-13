@@ -17,6 +17,7 @@ import java.util.zip.ZipFile;
 
 import com.anysdk.framework.AdsWrapper;
 import com.anysdk.framework.IAPWrapper;
+import com.anysdk.framework.PluginHelper;
 import com.anysdk.framework.PluginWrapper;
 import com.anysdk.framework.PushWrapper;
 import com.anysdk.framework.ShareWrapper;
@@ -63,7 +64,7 @@ public class MainActivity extends Activity {
 
 	private String[] mainStrings = new String[] { "User System", "IAP System",
 			"Share System", "Social System", "Ads System", "Analytics System",
-			"Push System", "Crash System", "REC System"};
+			"Push System", "Crash System", "REC System", "AdTracking System"};
 
 	private String[] userStrings = new String[] { "return", "login",
 			"isLogined", "getUserID" };
@@ -95,17 +96,21 @@ public class MainActivity extends Activity {
 
 	private String[] recStrings = new String[] { "return", "startRecording",
 			"stopRecording", "share" };
-
+	
+    private String[] adTrackingStrings = new String[] { "return",  "onRegister", "onLogin", "onPay",
+            "trackEvent" };
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 
 		super.onCreate(savedInstanceState);
-		
 
 		mAct = this;
 		mUIHandler = new Handler();
 		PluginWrapper.init(this);
 		wrapper.nativeInitPlugins();
+		
+	    Log.d(TAG_STRING, "getGameId" + PluginHelper.getGameId());
+
 
 		updataData("main","");
 		mainListView = new ListView(this);
@@ -145,7 +150,9 @@ public class MainActivity extends Activity {
 						updataData("crash",tagString);
 					} else if (titleString.equals("REC System")) {
 						updataData("rec",tagString);
-					}
+					}else if (titleString.equals("AdTracking System")) {
+                        updataData("adtracking",tagString);
+                    }
 					adapter.notifyDataSetChanged();
 					mainListView.setAdapter(adapter);
 				} else if(tagString.equals("ads")){
@@ -199,7 +206,10 @@ public class MainActivity extends Activity {
 		} else if (tag.equals("rec")) {
 			list.addAll(Arrays.asList(recStrings));
 			list = Controller.extendRECFunction(list);
-		} else if (tag.equals("Banner")) {
+		} else if (tag.equals("adtracking")) {
+            list.addAll(Arrays.asList(adTrackingStrings));
+            list = Controller.extendAdTrackingFunction(list);
+        }else if (tag.equals("Banner")) {
 			list.addAll(Arrays.asList(adsFuntionStrings));
 		} else if (tag.equals("FullScreen")) {
 			list.addAll(Arrays.asList(adsFuntionStrings));

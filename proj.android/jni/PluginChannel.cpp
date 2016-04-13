@@ -101,9 +101,9 @@ void PluginChannel::loadPlugins()
      * oauthLoginServer参数是游戏服务提供的用来做登陆验证转发的接口地址。
      */
     std::string oauthLoginServer = "http://oauth.anysdk.com/api/OauthLoginDemo/Login.php";
-    std::string appKey = "D22AB625-CD4C-2167-D35C-C5A03E5896F5";
-    std::string appSecret = "8959c650440b6b051d6af588d7f965f3";
-    std::string privateKey = "BA26F2670407E0B8664DDA544026FA54";
+    std::string appKey = "0914CB16-BAEE-790E-808E-3A37B8FFBE3F";
+    std::string appSecret = "62bee0ddb86bdeccb8acd959765041cc";
+    std::string privateKey = "96C273AB03E1A798BA1AD0C38004871F";
     
 	_pAgent = AgentManager::getInstance();
 	_pAgent->init(appKey,appSecret,privateKey,oauthLoginServer);
