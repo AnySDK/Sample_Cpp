@@ -113,7 +113,8 @@ void AdTracking::onPay()
     productInfo["Currency_Type"] = "CNY";
     productInfo["Payment_Type"] = "paytype";
     productInfo["Payment_Time"] = "paytime";
-
+    productInfo["Item_Id"] = "itemid";
+    productInfo["Item_Count"] = "3";
     _pAdTracking->onPay(productInfo);
 }
 
@@ -142,7 +143,8 @@ void AdTracking::onStartToPay()
     info["Currency_Type"] = "CNY";
     info["Payment_Type"] = "paytype";
     info["Payment_Time"] = "paytime";
-
+    info["Item_Id"] = "itemid";
+    info["Item_Count"] = "3";
     _pAdTracking->trackEvent("onStartToPay",&info);
 //    PluginParam data(info);
 //    _pAdTracking->callFuncWithParam("onStartToPay", &data, NULL);
