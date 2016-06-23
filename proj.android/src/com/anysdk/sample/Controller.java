@@ -177,6 +177,22 @@ public class Controller {
 		}
 		else if (tag.equals("OfferWall")) {
 			aboutAds(AdsWrapper.AD_TYPE_OFFERWALL,title);
+		}else if (tag.equals("adtracking")) {
+		    if (title.equals("onRegister")) {
+                wrapper.nativeOnRegister();
+            } else if (title.equals("onLogin")) {
+                wrapper.nativeOnLogin();
+            } else if (title.equals("onPay")) {
+                wrapper.nativeOnPay();
+            } else if (title.equals("trackEvent")) {
+                wrapper.nativeTrackEvent();
+            }else if (title.equals("onCreateRole")) {
+                wrapper.nativeOnCreateRole();
+            }else if (title.equals("onLevelUp")) {
+                wrapper.nativeOnLevelUp();
+            }else if (title.equals("onStartToPay")) {
+                wrapper.nativeOnStartToPay();
+            }      
 		}
 		
 	}
@@ -285,6 +301,19 @@ public class Controller {
 		}
 		return source;
 	}
+	
+	   public static List<String> extendAdTrackingFunction(List<String> source) {
+	        if (wrapper.nativeAdTrackingIsFunctionSupported("onCreateRole")) {
+	            source.add("onCreateRole");
+	        }
+	        if (wrapper.nativeAdTrackingIsFunctionSupported("onLevelUp")) {
+	            source.add("onLevelUp");
+	        }
+	        if (wrapper.nativeAdTrackingIsFunctionSupported("onStartToPay")) {
+	            source.add("onStartToPay");
+	        }
+	        return source;
+	    }
 	
 	public static void aboutAds(int type, String title){
 		if (title.equals("preloadAds1")) {

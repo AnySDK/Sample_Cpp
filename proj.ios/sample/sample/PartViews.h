@@ -18,7 +18,8 @@ enum base_menu{
     PUSH_SYSTEM,
     ANALYTICS_SYSTEM,
     CRASH_SYSTEM,
-    REC_SYSTEM
+    REC_SYSTEM,
+    ADTRACKING_SYSTEM
 };
 
 enum system_level{
@@ -31,7 +32,8 @@ enum system_level{
     ANALYTICS_LEVEL=700,
     CRASH_LEVEL=800,
     REC_LEVEL=900,
-    BACK_BUTTON=1000
+    ADTRACKING_LEVEL=1000,
+    BACK_BUTTON=1100
 };
 enum user_action{
     USER_LOGIN=0,
@@ -137,7 +139,17 @@ enum crash_action{
     ACTION_LEAVE_BREAD_CRUMB,
 };
 
-#define BASE_SYSTEM_COUNT 9
+enum adtracking_action{
+    ACTION_ON_REGISTER = 0,
+    ACTION_ON_LOGIN,
+    ACTION_ON_PAY,
+    ACTION_ON_TRACK_EVENT,
+    ACTION_ON_START_TO_PAY,
+    ACTION_ON_CREATE_ROLE,
+    ACTION_ON_LEVEL_UP,
+};
+
+#define BASE_SYSTEM_COUNT 10
 
 static int BASE_FULLSCREEN_Y = 20;
 

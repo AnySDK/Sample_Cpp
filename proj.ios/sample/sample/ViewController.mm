@@ -30,7 +30,7 @@
     [_parts initAgent];
 }
 
-static NSString* base_menu[] = {@"User System", @"IAP System", @"Share System", @"Ads System", @"Social System", @"Push System", @"Analytics System",@"Crash System", @"REC System"};
+static NSString* base_menu[] = {@"User System", @"IAP System", @"Share System", @"Ads System", @"Social System", @"Push System", @"Analytics System",@"Crash System", @"REC System", @"AdTracking System"};
 
 static int g_testCount = sizeof(base_menu) / sizeof(base_menu[0]);
 

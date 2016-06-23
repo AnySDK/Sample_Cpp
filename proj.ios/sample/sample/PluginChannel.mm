@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include "Analytics.h"
 #include "Push.h"
+#include "PluginHelper.h"
 
 #include "PartViews.h"
 
@@ -76,18 +77,10 @@ void PluginChannel::loadPlugins()
      * appKey、appSecret、privateKey不能使用Sample中的值，需要从打包工具中游戏管理界面获取，替换
      * oauthLoginServer参数是游戏服务提供的用来做登陆验证转发的接口地址。
      */
-#define qudao_info
-#ifdef qudao_info
     std::string appKey = "0914CB16-BAEE-790E-808E-3A37B8FFBE3F";
     std::string appSecret = "62bee0ddb86bdeccb8acd959765041cc";
     std::string privateKey = "96C273AB03E1A798BA1AD0C38004871F";
-    std::string oauthLoginServer = "http://oauth.qudao.info/api/OauthLoginDemo/Login.php";
-#else
-    std::string appKey = "CED525C0-8D41-F514-96D8-90092EB3899A";
-    std::string appSecret = "a29b4f22aa63b8274f7f6e2dd5893d9b";
-    std::string privateKey = "963C4B4DA71BC51C69EB11D24D0C7D49";
     std::string oauthLoginServer = "http://oauth.anysdk.com/api/OauthLoginDemo/Login.php";
-#endif
     _pAgent = AgentManager::getInstance();
     _pAgent->init(appKey,appSecret,privateKey,oauthLoginServer);
     
@@ -114,6 +107,8 @@ void PluginChannel::loadPlugins()
     Analytics::getInstance()->setSessionContinueMillis(15000);
     Analytics::getInstance()->logTimedEventBegin("Load");
     Push::getInstance()->startPush();
+    printf("getGameId%s\n",[[PluginHelper getGameId] UTF8String]);
+
 }
 
 void PluginChannel::unloadPlugins()

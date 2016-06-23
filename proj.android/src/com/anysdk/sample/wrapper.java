@@ -112,6 +112,16 @@ public class wrapper {
 	public static native void nativeRECEnterPlatform();
 	public static native void nativeSetMetaData();
 	
+	//AdTracking相关函数
+    public static native boolean nativeAdTrackingIsFunctionSupported(String name);
+    public static native void nativeOnRegister();
+    public static native void nativeOnLogin();
+    public static native void nativeOnPay();
+    public static native void nativeTrackEvent();
+    public static native void nativeOnStartToPay();
+    public static native void nativeOnCreateRole();
+    public static native void nativeOnLevelUp();
+	
 	
 	
 	
