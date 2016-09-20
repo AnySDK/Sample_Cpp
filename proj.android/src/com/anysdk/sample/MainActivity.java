@@ -1,28 +1,14 @@
 package com.anysdk.sample;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
-import com.anysdk.framework.AdsWrapper;
-import com.anysdk.framework.IAPWrapper;
+
 import com.anysdk.framework.PluginHelper;
 import com.anysdk.framework.PluginWrapper;
-import com.anysdk.framework.PushWrapper;
-import com.anysdk.framework.ShareWrapper;
-import com.anysdk.framework.SocialWrapper;
-import com.anysdk.framework.UserWrapper;
 
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -31,16 +17,13 @@ import android.app.ActivityManager.RunningAppProcessInfo;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.database.DataSetObserver;
-import android.graphics.drawable.Drawable;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
@@ -293,8 +276,8 @@ public class MainActivity extends Activity {
 
 	@Override
 	protected void onDestroy() {
-		super.onDestroy();
 		PluginWrapper.onDestroy();
+		super.onDestroy();
 		wrapper.nativeUnLoadPlugins();
 	};
 
@@ -302,6 +285,7 @@ public class MainActivity extends Activity {
 
 	@Override
 	protected void onStop() {
+		PluginWrapper.onStop();
 		super.onStop();
 		wrapper.nativeStopSession();
 		if (!isAppOnForeground()) {
@@ -311,8 +295,8 @@ public class MainActivity extends Activity {
 
 	@Override
 	protected void onResume() {
-		super.onResume();
 		PluginWrapper.onResume();
+		super.onResume();
 		wrapper.nativeStartSession();
 		/**
 		 * 后台切换回来判断是否支持调用暂停界面接口
@@ -324,15 +308,15 @@ public class MainActivity extends Activity {
 	}
 
 	@Override
-	public void onPause() {
+	protected void onPause() {
 		PluginWrapper.onPause();
 		super.onPause();
 	}
 	
-	 @Override
+	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
 		PluginWrapper.onActivityResult(requestCode, resultCode, data);
+		super.onActivityResult(requestCode, resultCode, data);
 	}
 
 	@Override
@@ -347,6 +331,36 @@ public class MainActivity extends Activity {
 		super.onRestart();
 	}
 	
+	@Override
+	protected void onStart() {
+		PluginWrapper.onStart();
+		super.onStart();
+	}
+	
+	@Override
+	public void onBackPressed() {
+		PluginWrapper.onBackPressed();
+        super.onBackPressed();
+    }
+	
+    @Override
+	public void onConfigurationChanged(Configuration newConfig) {
+    	PluginWrapper.onConfigurationChanged(newConfig);
+        super.onConfigurationChanged(newConfig);
+    }
+    
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+    	PluginWrapper.onRestoreInstanceState(savedInstanceState);
+        super.onRestoreInstanceState(savedInstanceState);
+    }
+    
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+    	PluginWrapper.onSaveInstanceState(outState);
+        super.onSaveInstanceState(outState);
+    }
+    
 	public boolean isAppOnForeground() {
 		ActivityManager activityManager = (ActivityManager) getApplicationContext()
 				.getSystemService(Context.ACTIVITY_SERVICE);
