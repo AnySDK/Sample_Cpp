@@ -15,7 +15,7 @@
 using namespace anysdk::framework;
 using namespace std;
 
-#define APPSTORE_CHANNEL_ID "500026"
+#define APPSTORE_PLUGIN_ID "92"
 
 class PluginChannel:public PayResultListener, public UserActionListener
 {
