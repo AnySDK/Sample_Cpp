@@ -197,12 +197,13 @@ void PluginChannel::payMode(std::string id)
 
 void PluginChannel::requestProducts()
 {
+    // AppStroe才有的接口，也可以不调用requestProducts直接调用payForProduct 
     printf("payRequest\n");
     if(_pluginsIAPMap)
     {
         std::map<std::string , ProtocolIAP*>::iterator it = _pluginsIAPMap->begin();
         for (; it != _pluginsIAPMap->end(); it++) {
-            if (it->first == APPSTORE_CHANNEL_ID) {
+            if (it->first == APPSTORE_PLUGIN_ID) {
                 _iapAppstore =  it->second;
             }
         }
@@ -221,37 +222,22 @@ void PluginChannel::pay()
     std::map<std::string , ProtocolIAP*>::iterator it = _pluginsIAPMap->begin();
     if(_pluginsIAPMap)
     {
+        productInfo["Product_Id"] = "1";
+        productInfo["Product_Name"] = "10元宝";
         productInfo["Product_Price"] = "1";
-        if(_pAgent->getChannelId()=="000016" || _pAgent->getChannelId()=="000009"|| _pAgent->getChannelId()=="000349")
-        {
-            productInfo["Product_Id"] = "1";
-        }
-        else if(_pAgent->getChannelId()=="000056" )
-        {
-            //联通，传计费点
-            productInfo["Product_Id"] = "130201102727";
-        }
-        else if (_pAgent->getChannelId()=="000266")
-        {
-            //移动基地，传计费点后三位
-            productInfo["Product_Id"] = "001";
-        }
-        else if (_pAgent->getChannelId() == APPSTORE_CHANNEL_ID)
-        {
-            productInfo["Product_Id"] = "PD_01";
-        }
-        else
-        {
-            productInfo["Product_Id"] = "monthly";
-        }
-        
-        productInfo["Product_Name"] = "豌豆荚测试a1";
-        productInfo["Server_Id"] = "13";
         productInfo["Product_Count"] = "1";
-        productInfo["Role_Id"] = "1";
-        productInfo["Role_Name"] = "1";
+        productInfo["Product_Desc"] = "gold";
+        productInfo["Coin_Name"] = "元宝";
+        productInfo["Coin_Rate"] = "10";
+        productInfo["Role_Id"] = "123456";
+        productInfo["Role_Name"] = "test";
         productInfo["Role_Grade"] = "1";
         productInfo["Role_Balance"] = "1";
+        productInfo["Vip_Level"] = "1";
+        productInfo["Party_Name"] = "test";
+        productInfo["Server_Id"] = "1";
+        productInfo["Server_Name"] = "test";
+        productInfo["EXT"] = "test";
         Analytics::getInstance()->logEvent("pay", productInfo);
         if(_pluginsIAPMap->size() == 1)
         {
@@ -401,13 +387,17 @@ void PluginChannel::submitLoginGameRole()
         if(PluginChannel::getInstance()->isFunctionSupported("submitLoginGameRole"))
         {
             StringMap userInfo;
-            userInfo["roleId"] = "ceshi : 123456";
-            userInfo["roleName"] = "ceshi : test";
-            userInfo["roleLevel"] = "ceshi : 10";
-            userInfo["zoneId"] = "ceshi : 123";
-            userInfo["zoneName"] = "ceshi : test";
-            userInfo["dataType"] = "ceshi : 1";
-            userInfo["ext"] = "ceshi : login";
+            userInfo["dataType"] = "1";
+            userInfo["roleId"] = "123456";
+            userInfo["roleName"] = "test";
+            userInfo["roleLevel"] = "1";
+            userInfo["zoneId"] = "1";
+            userInfo["zoneName"] = "test";
+            userInfo["balance"] = "1";
+            userInfo["partyName"] = "test";
+            userInfo["vipLevel"] = "1";
+            userInfo["roleCTime"] = "1480318110";
+            userInfo["roleLevelMTime"] = "-1";
             PluginParam data(userInfo);
             _pUser->callFuncWithParam("submitLoginGameRole",&data,NULL);
         }

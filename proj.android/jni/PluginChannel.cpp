@@ -218,33 +218,24 @@ void PluginChannel::pay()
 {
 
 	std::map<std::string , ProtocolIAP*>::iterator it = _pluginsIAPMap->begin();
-	std::string channelId = _pAgent->getChannelId();
 	if(_pluginsIAPMap)
-	{
+	{	
+		productInfo["Product_Id"] = "1";
+		productInfo["Product_Name"] = "10元宝";
 		productInfo["Product_Price"] = "1";
-        if(channelId=="000016" || channelId =="000009"|| channelId =="000349"){
-			productInfo["Product_Id"] = "1";
-		}
-        else
-        if(channelId=="000056" ){//联通，传计费点
-        	productInfo["Product_Id"] = "130201102727";
-		}
-		else
-		if (channelId=="000266") {//移动基地，传计费点后三位
-			productInfo["Product_Id"] = "001";
-		}
-		else
-		{
-			productInfo["Product_Id"] = "monthly";
-		}
-
-		productInfo["Product_Name"] = "豌豆荚测试a1";
-		productInfo["Server_Id"] = "13";
 		productInfo["Product_Count"] = "1";
-		productInfo["Role_Id"] = "1";
-		productInfo["Role_Name"] = "1";
+		productInfo["Product_Desc"] = "gold";
+		productInfo["Coin_Name"] = "元宝";
+		productInfo["Coin_Rate"] = "10";
+		productInfo["Role_Id"] = "123456";
+		productInfo["Role_Name"] = "test";
 		productInfo["Role_Grade"] = "1";
 		productInfo["Role_Balance"] = "1";
+		productInfo["Vip_Level"] = "1";
+		productInfo["Party_Name"] = "test";
+		productInfo["Server_Id"] = "1";
+		productInfo["Server_Name"] = "test";
+		productInfo["EXT"] = "test";
 		_pAnalytics->logEvent("pay", productInfo);
 		if(_pluginsIAPMap->size() == 1)
 		{
@@ -368,13 +359,17 @@ void PluginChannel::submitLoginGameRole()
 	if(!_pUser || !isFunctionSupported("submitLoginGameRole")) return;
 
 	StringMap userInfo;
-	userInfo["roleId"] = "ceshi : 123456";
-	userInfo["roleName"] = "ceshi : test";
-	userInfo["roleLevel"] = "ceshi : 10";
-	userInfo["zoneId"] = "ceshi : 123";
-	userInfo["zoneName"] = "ceshi : test";
-	userInfo["dataType"] = "ceshi : 1";
-	userInfo["ext"] = "ceshi : login";
+	userInfo["dataType"] = "1";
+	userInfo["roleId"] = "123456";
+	userInfo["roleName"] = "test";
+	userInfo["roleLevel"] = "1";
+	userInfo["zoneId"] = "1";
+	userInfo["zoneName"] = "test";
+	userInfo["balance"] = "60";
+	userInfo["partyName"] = "test";
+	userInfo["vipLevel"] = "1";
+	userInfo["roleCTime"] = "1480318110";
+	userInfo["roleLevelMTime"] = "-1";
 	PluginParam data(userInfo);
 	_pUser->callFuncWithParam("submitLoginGameRole",&data,NULL);
 }
