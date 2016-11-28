@@ -22,19 +22,19 @@ public class Controller {
 				wrapper.nativeLogout();
 			} else if (title.equals("enterPlatform")) {
 				// 调用显示平台中心
-				wrapper.nativeAntiAddictionQuery();
+				wrapper.nativeEnterPlatform();
 			} else if (title.equals("showToolBar")) {
 				// 显示悬浮窗
-				wrapper.nativeAntiAddictionQuery();
+				wrapper.nativeShowToolBar();
 			} else if (title.equals("hideToolBar")) {
 				// 隐藏悬浮窗
-				wrapper.nativeAntiAddictionQuery();
+				wrapper.nativeHideToolBar();
 			} else if (title.equals("accountSwitch")) {
 				// 切换账号
-				wrapper.nativeAntiAddictionQuery();
+				wrapper.nativeAccountSwitch();
 			} else if (title.equals("realNameRegister")) {
 				// 实名注册
-				wrapper.nativeAntiAddictionQuery();
+				wrapper.nativeRealNameRegister();
 			} else if (title.equals("antiAddictionQuery")) {
 				// 防沉迷查询
 				wrapper.nativeAntiAddictionQuery();
